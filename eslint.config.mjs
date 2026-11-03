@@ -1,0 +1,20 @@
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import playwright from 'eslint-plugin-playwright';
+import prettier from 'eslint-config-prettier';
+
+export default tseslint.config(
+  {
+    ignores: [
+      'node_modules',
+      'playwright-report',
+      'test-results',
+      'allure-results',
+      'allure-report',
+    ],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  { ...playwright.configs['flat/recommended'], files: ['tests/**'] },
+  prettier, // keep last: turns off ESLint rules that clash with Prettier
+);
