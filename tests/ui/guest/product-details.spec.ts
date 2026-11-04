@@ -1,5 +1,5 @@
-import { test, expect } from '../../src/fixtures/pages';
-import productData from '../../test-data/products.json';
+import { test, expect } from '../../../src/fixtures/pages';
+import productData from '../../../test-data/products.json';
 
 /**
  * Data-driven: one set of tests per product in test-data/products.json.

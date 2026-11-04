@@ -1,5 +1,5 @@
-import { test, expect } from '../../src/fixtures/pages';
-import searchData from '../../test-data/search.json';
+import { test, expect } from '../../../src/fixtures/pages';
+import searchData from '../../../test-data/search.json';
 
 test.describe('Product search', () => {
   test.beforeEach(async ({ homePage }) => {

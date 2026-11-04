@@ -1,4 +1,4 @@
-import { test, expect } from '../../src/fixtures/pages';
+import { test, expect } from '../../../src/fixtures/pages';
 
 type PageMeta = { total: number; per_page: number; last_page: number; current_page: number };
 

@@ -1,4 +1,4 @@
-import { test, expect } from '../../src/fixtures/pages';
+import { test, expect } from '../../../src/fixtures/pages';
 
 test.describe('Product sorting', () => {
   test.beforeEach(async ({ homePage }) => {

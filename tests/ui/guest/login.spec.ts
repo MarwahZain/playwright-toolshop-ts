@@ -1,5 +1,5 @@
-import { test, expect } from '../../src/fixtures/pages';
-import loginData from '../../test-data/login.json';
+import { test, expect } from '../../../src/fixtures/pages';
+import loginData from '../../../test-data/login.json';
 
 const emptyFieldCases = loginData.emptyFieldCases as {
   name: string;
