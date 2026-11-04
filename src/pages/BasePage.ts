@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { HeaderComponent } from './components/HeaderComponent';
 
 export abstract class BasePage {
@@ -12,5 +12,13 @@ export abstract class BasePage {
 
   async open(): Promise<void> {
     await this.page.goto(this.path);
+  }
+
+  async expectUrl(url: RegExp): Promise<void> {
+    await expect(this.page).toHaveURL(url);
+  }
+
+  async expectTitle(title: RegExp): Promise<void> {
+    await expect(this.page).toHaveTitle(title);
   }
 }

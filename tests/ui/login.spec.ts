@@ -17,25 +17,21 @@ test.describe('Login', () => {
   test(
     'customer can log in with valid credentials',
     { tag: ['@smoke', '@regression'] },
-    async ({ page, loginPage }) => {
+    async ({ loginPage, accountPage }) => {
       await loginPage.login(loginData.validCustomer.email, loginData.validCustomer.password);
 
-      await expect(page).toHaveURL(/\/account$/);
-      await expect(page.getByTestId('page-title')).toHaveText('My account');
-      await expect(loginPage.header.navMenu).toContainText(loginData.customerName);
+      await accountPage.expectUrl(/\/account$/);
+      await expect(accountPage.pageTitle).toHaveText('My account');
+      await expect(accountPage.header.navMenu).toContainText(loginData.customerName);
     },
   );
 
-  test(
-    'shows an error for an invalid password',
-    { tag: '@regression' },
-    async ({ page, loginPage }) => {
-      await loginPage.login(process.env.NEGATIVE_EMAIL!, loginData.wrongPassword);
+  test('shows an error for an invalid password', { tag: '@regression' }, async ({ loginPage }) => {
+    await loginPage.login(loginData.invalidCustomer.email, loginData.invalidCustomer.password);
 
-      await expect(loginPage.loginError).toHaveText(loginData.invalidCredentialsMessage);
-      await expect(page).toHaveURL(/\/auth\/login$/);
-    },
-  );
+    await expect(loginPage.loginError).toHaveText(loginData.invalidCredentialsMessage);
+    await loginPage.expectUrl(/\/auth\/login$/);
+  });
 
   for (const { name, email, password, error, message } of emptyFieldCases) {
     test(`shows a validation error when ${name}`, { tag: '@regression' }, async ({ loginPage }) => {
@@ -48,7 +44,7 @@ test.describe('Login', () => {
     'shows both errors when all fields are empty',
     { tag: '@regression' },
     async ({ loginPage }) => {
-      await loginPage.submitButton.click();
+      await loginPage.submit();
 
       await expect(loginPage.emailError).toHaveText('Email is required');
       await expect(loginPage.passwordError).toHaveText('Password is required');

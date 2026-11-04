@@ -3,8 +3,15 @@
     "email": "customer@practicesoftwaretesting.com",
     "password": "welcome01"
   },
+  "validAdmin": {
+    "email": "admin@practicesoftwaretesting.com",
+    "password": "welcome01"
+  },
   "customerName": "Jane Doe",
-  "wrongPassword": "WrongPassword123",
+  "invalidCustomer": {
+    "email": "customer3@practicesoftwaretesting.com",
+    "password": "WrongPassword123"
+  },
   "invalidCredentialsMessage": "Invalid email or password",
   "emptyFieldCases": [
     {
