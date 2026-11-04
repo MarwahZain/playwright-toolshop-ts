@@ -10,11 +10,7 @@ export type BillingAddress = {
 };
 
 export type PaymentMethod =
-  | 'bank-transfer'
-  | 'cash-on-delivery'
-  | 'credit-card'
-  | 'buy-now-pay-later'
-  | 'gift-card';
+  'bank-transfer' | 'cash-on-delivery' | 'credit-card' | 'buy-now-pay-later' | 'gift-card';
 
 export class CheckoutPage {
   readonly header: HeaderComponent;
