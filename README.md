@@ -63,6 +63,7 @@ test-data/            JSON data for data-driven tests
 tests/ui/guest/       UI tests that run signed out
 tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
+docs/ROADMAP.md       milestones and progress
 docs/LEARNINGS.md     notes and lessons from building the suite
 ```
 
