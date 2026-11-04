@@ -68,3 +68,5 @@ docker exec -it pst-laravel-api-1 php artisan migrate:fresh --seed
 
 selectOption() returns the selected values (Promise<string[]>), but I typed the action as () => Promise<void>, so TypeScript rejects anything that returns a value.
 change it to Promise<unknown>
+
+using css selectors will trigger the no-raw-locators rule and it will flag it

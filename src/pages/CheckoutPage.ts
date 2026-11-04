@@ -1,4 +1,5 @@
 import { Locator, Page } from '@playwright/test';
+import { HeaderComponent } from './components/HeaderComponent';
 
 export type BillingAddress = {
   street: string;
@@ -16,6 +17,7 @@ export type PaymentMethod =
   | 'gift-card';
 
 export class CheckoutPage {
+  readonly header: HeaderComponent;
   readonly proceedAfterSignIn: Locator;
   readonly street: Locator;
   readonly city: Locator;
@@ -28,6 +30,7 @@ export class CheckoutPage {
   readonly successMessage: Locator;
 
   constructor(private readonly page: Page) {
+    this.header = new HeaderComponent(page);
     this.proceedAfterSignIn = page.getByTestId('proceed-2');
     this.street = page.getByTestId('street');
     this.city = page.getByTestId('city');

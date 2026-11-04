@@ -1,6 +1,8 @@
 import { Locator, Page, Response } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { waitForProducts } from '../utils/products';
+import { parsePrice } from '../utils/price';
+import { ProductCardComponent } from './components/ProductCardComponent';
 
 export type SortOption = 'name,asc' | 'name,desc' | 'price,asc' | 'price,desc';
 
@@ -10,6 +12,7 @@ export class HomePage extends BasePage {
   readonly searchInput: Locator;
   readonly searchSubmit: Locator;
   readonly sortSelect: Locator;
+  readonly cards: Locator;
   readonly productNames: Locator;
   readonly productPrices: Locator;
   readonly noResults: Locator;
@@ -19,6 +22,7 @@ export class HomePage extends BasePage {
     this.searchInput = page.getByTestId('search-query');
     this.searchSubmit = page.getByTestId('search-submit');
     this.sortSelect = page.getByTestId('sort');
+    this.cards = ProductCardComponent.all(page);
     this.productNames = page.getByTestId('product-name');
     this.productPrices = page.getByTestId('product-price');
     this.noResults = page.getByTestId('no-results');
@@ -45,7 +49,8 @@ export class HomePage extends BasePage {
   }
 
   async openProduct(name: string): Promise<void> {
-    await this.productNames.filter({ hasText: name }).first().click();
+    const card = new ProductCardComponent(this.cards.filter({ hasText: name }).first());
+    await card.open();
   }
 
   async getNames(): Promise<string[]> {
@@ -54,6 +59,6 @@ export class HomePage extends BasePage {
 
   async getPrices(): Promise<number[]> {
     const texts = await this.productPrices.allTextContents();
-    return texts.map((t) => Number(t.replace(/[^0-9.]/g, '')));
+    return texts.map(parsePrice);
   }
 }

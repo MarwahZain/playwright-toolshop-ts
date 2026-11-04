@@ -1,7 +1,12 @@
 import { Page } from '@playwright/test';
+import { HeaderComponent } from './components/HeaderComponent';
 
 export abstract class BasePage {
-  constructor(protected readonly page: Page) {}
+  readonly header: HeaderComponent;
+
+  constructor(protected readonly page: Page) {
+    this.header = new HeaderComponent(page);
+  }
 
   protected abstract readonly path: string;
 
