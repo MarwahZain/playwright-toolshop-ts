@@ -1,0 +1,8 @@
+{
+  "products": [
+    { "name": "Combination Pliers", "price": 14.15, "category": "Pliers" },
+    { "name": "Slip Joint Pliers", "price": 9.17, "category": "Pliers" },
+    { "name": "Bolt Cutters", "price": 48.41, "category": "Pliers" },
+    { "name": "Thor Hammer", "price": 11.14, "category": "Hammer" }
+  ]
+}

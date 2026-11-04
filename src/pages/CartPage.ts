@@ -1,5 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { parsePrice } from '../utils/price';
 
 export class CartPage extends BasePage {
   protected readonly path = '/checkout';
@@ -24,6 +25,6 @@ export class CartPage extends BasePage {
   }
 
   async getTotal(): Promise<number> {
-    return Number((await this.cartTotal.textContent())?.replace(/[^0-9.]/g, ''));
+    return parsePrice((await this.cartTotal.textContent()) ?? '');
   }
 }

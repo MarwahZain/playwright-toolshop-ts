@@ -1,6 +1,8 @@
 import { Locator, Page, Response } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { waitForProducts } from '../utils/products';
+import { parsePrice } from '../utils/price';
+import { ProductCardComponent } from './components/ProductCardComponent';
 
 export type SortOption = 'name,asc' | 'name,desc' | 'price,asc' | 'price,desc';
 
@@ -10,18 +12,27 @@ export class HomePage extends BasePage {
   readonly searchInput: Locator;
   readonly searchSubmit: Locator;
   readonly sortSelect: Locator;
+  readonly cards: Locator;
   readonly productNames: Locator;
   readonly productPrices: Locator;
   readonly noResults: Locator;
+  readonly pagination: Locator;
+  readonly activePage: Locator;
 
   constructor(page: Page) {
     super(page);
     this.searchInput = page.getByTestId('search-query');
     this.searchSubmit = page.getByTestId('search-submit');
     this.sortSelect = page.getByTestId('sort');
+    this.cards = ProductCardComponent.all(page);
     this.productNames = page.getByTestId('product-name');
     this.productPrices = page.getByTestId('product-price');
     this.noResults = page.getByTestId('no-results');
+    // No test id or role exposed for the pagination list, so a CSS locator is the only option.
+    // eslint-disable-next-line playwright/no-raw-locators
+    this.pagination = page.locator('ul.pagination');
+    // eslint-disable-next-line playwright/no-raw-locators
+    this.activePage = this.pagination.locator('.active');
   }
 
   /** Opens the home page and returns the first products response (contains paging metadata). */
@@ -30,8 +41,26 @@ export class HomePage extends BasePage {
   }
 
   async searchFor(term: string): Promise<Response> {
+    const response = this.page.waitForResponse(
+      (res) => res.url().includes('/products/search') && res.ok(),
+    );
     await this.searchInput.fill(term);
-    return waitForProducts(this.page, () => this.searchSubmit.click());
+    await this.searchSubmit.click();
+    return response;
+  }
+
+  async goToPage(label: string): Promise<Response> {
+    return waitForProducts(this.page, () =>
+      this.pagination.getByText(label, { exact: true }).click(),
+    );
+  }
+
+  async goToNextPage(): Promise<Response> {
+    return waitForProducts(this.page, () => this.pagination.getByLabel('Next').click());
+  }
+
+  async goToPreviousPage(): Promise<Response> {
+    return waitForProducts(this.page, () => this.pagination.getByLabel('Previous').click());
   }
 
   async toggleCategory(category: string): Promise<Response> {
@@ -45,7 +74,8 @@ export class HomePage extends BasePage {
   }
 
   async openProduct(name: string): Promise<void> {
-    await this.productNames.filter({ hasText: name }).first().click();
+    const card = new ProductCardComponent(this.cards.filter({ hasText: name }).first());
+    await card.open();
   }
 
   async getNames(): Promise<string[]> {
@@ -54,6 +84,6 @@ export class HomePage extends BasePage {
 
   async getPrices(): Promise<number[]> {
     const texts = await this.productPrices.allTextContents();
-    return texts.map((t) => Number(t.replace(/[^0-9.]/g, '')));
+    return texts.map(parsePrice);
   }
 }

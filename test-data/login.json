@@ -1,0 +1,32 @@
+{
+  "validCustomer": {
+    "email": "customer@practicesoftwaretesting.com",
+    "password": "welcome01"
+  },
+  "validAdmin": {
+    "email": "admin@practicesoftwaretesting.com",
+    "password": "welcome01"
+  },
+  "customerName": "Jane Doe",
+  "invalidCustomer": {
+    "email": "customer3@practicesoftwaretesting.com",
+    "password": "WrongPassword123"
+  },
+  "invalidCredentialsMessage": "Invalid email or password",
+  "emptyFieldCases": [
+    {
+      "name": "email is empty",
+      "email": "",
+      "password": "welcome01",
+      "error": "emailError",
+      "message": "Email is required"
+    },
+    {
+      "name": "password is empty",
+      "email": "customer@practicesoftwaretesting.com",
+      "password": "",
+      "error": "passwordError",
+      "message": "Password is required"
+    }
+  ]
+}

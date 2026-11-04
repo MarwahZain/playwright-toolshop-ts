@@ -1,6 +1,9 @@
 import { Locator, Page } from '@playwright/test';
+import { parsePrice } from '../utils/price';
+import { HeaderComponent } from './components/HeaderComponent';
 
 export class ProductPage {
+  readonly header: HeaderComponent;
   readonly name: Locator;
   readonly unitPrice: Locator;
   readonly quantity: Locator;
@@ -10,6 +13,7 @@ export class ProductPage {
   readonly addedToCartToast: Locator;
 
   constructor(private readonly page: Page) {
+    this.header = new HeaderComponent(page);
     this.name = page.getByTestId('product-name');
     this.unitPrice = page.getByTestId('unit-price');
     this.quantity = page.getByTestId('quantity');
@@ -29,6 +33,6 @@ export class ProductPage {
   }
 
   async getUnitPrice(): Promise<number> {
-    return Number((await this.unitPrice.textContent())?.replace(/[^0-9.]/g, ''));
+    return parsePrice((await this.unitPrice.textContent()) ?? '');
   }
 }
