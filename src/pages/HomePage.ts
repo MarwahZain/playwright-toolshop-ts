@@ -16,6 +16,8 @@ export class HomePage extends BasePage {
   readonly productNames: Locator;
   readonly productPrices: Locator;
   readonly noResults: Locator;
+  readonly pagination: Locator;
+  readonly activePage: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -26,6 +28,11 @@ export class HomePage extends BasePage {
     this.productNames = page.getByTestId('product-name');
     this.productPrices = page.getByTestId('product-price');
     this.noResults = page.getByTestId('no-results');
+    // No test id or role exposed for the pagination list, so a CSS locator is the only option.
+    // eslint-disable-next-line playwright/no-raw-locators
+    this.pagination = page.locator('ul.pagination');
+    // eslint-disable-next-line playwright/no-raw-locators
+    this.activePage = this.pagination.locator('.active');
   }
 
   /** Opens the home page and returns the first products response (contains paging metadata). */
@@ -34,8 +41,26 @@ export class HomePage extends BasePage {
   }
 
   async searchFor(term: string): Promise<Response> {
+    const response = this.page.waitForResponse(
+      (res) => res.url().includes('/products/search') && res.ok(),
+    );
     await this.searchInput.fill(term);
-    return waitForProducts(this.page, () => this.searchSubmit.click());
+    await this.searchSubmit.click();
+    return response;
+  }
+
+  async goToPage(label: string): Promise<Response> {
+    return waitForProducts(this.page, () =>
+      this.pagination.getByText(label, { exact: true }).click(),
+    );
+  }
+
+  async goToNextPage(): Promise<Response> {
+    return waitForProducts(this.page, () => this.pagination.getByLabel('Next').click());
+  }
+
+  async goToPreviousPage(): Promise<Response> {
+    return waitForProducts(this.page, () => this.pagination.getByLabel('Previous').click());
   }
 
   async toggleCategory(category: string): Promise<Response> {

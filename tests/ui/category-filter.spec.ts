@@ -1,59 +1,61 @@
-import { test, expect, Page } from '@playwright/test';
-
-async function toggleCategory(page: Page, category: string) {
-  const filterResponse = page.waitForResponse(
-    (res) =>
-      new URL(res.url()).pathname === '/products' &&
-      res.request().method() === 'QUERY' &&
-      res.ok(),
-  );
-  await page.getByLabel(category, { exact: true }).click();
-  return filterResponse;
-}
+import { test, expect } from '../../src/fixtures/pages';
 
 test.describe('Category filter', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByTestId('product-name').first()).toBeVisible();
+  test.beforeEach(async ({ homePage }) => {
+    await homePage.open();
+    await expect(homePage.productNames.first()).toBeVisible();
   });
 
-  test('shows only products from the selected category', { tag: ['@smoke', '@regression'] }, async ({ page }) => {
-    await toggleCategory(page, 'Hammer');
+  test(
+    'shows only products from the selected category',
+    { tag: ['@smoke', '@regression'] },
+    async ({ homePage }) => {
+      await homePage.toggleCategory('Hammer');
 
-    const productNames = page.getByTestId('product-name');
-    await expect(productNames).not.toHaveCount(0);
-    await expect(productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
-  });
+      await expect(homePage.productNames).not.toHaveCount(0);
+      await expect(homePage.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+    },
+  );
 
-  test('UI shows exactly the products the API returned', { tag: '@regression' }, async ({ page }) => {
-    const response = await toggleCategory(page, 'Pliers');
-    const body = await response.json();
-    const apiNames: string[] = body.data.map((p: { name: string }) => p.name);
+  test(
+    'UI shows exactly the products the API returned',
+    { tag: '@regression' },
+    async ({ homePage }) => {
+      const response = await homePage.toggleCategory('Pliers');
+      const body = await response.json();
+      const apiNames: string[] = body.data.map((p: { name: string }) => p.name);
 
-    expect(apiNames.length).toBeGreaterThan(0);
-    await expect(page.getByTestId('product-name')).toHaveText(apiNames);
-  });
+      expect(apiNames.length).toBeGreaterThan(0);
+      await expect(homePage.productNames).toHaveText(apiNames);
+    },
+  );
 
-  test('selecting two categories combines their products', { tag: '@regression' }, async ({ page }) => {
-    await toggleCategory(page, 'Hammer');
-    const productNames = page.getByTestId('product-name');
-    await expect(productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
-    const hammerCount = await productNames.count();
+  test(
+    'selecting two categories combines their products',
+    { tag: '@regression' },
+    async ({ homePage }) => {
+      await homePage.toggleCategory('Hammer');
+      await expect(homePage.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+      const hammerCount = await homePage.productNames.count();
 
-    await toggleCategory(page, 'Pliers');
-    await expect(productNames.filter({ hasText: /pliers/i })).not.toHaveCount(0);
-    await expect(productNames.filter({ hasText: /hammer/i })).not.toHaveCount(0);
-    expect(await productNames.count()).toBeGreaterThan(hammerCount);
-  });
+      await homePage.toggleCategory('Pliers');
+      await expect(homePage.productNames.filter({ hasText: /pliers/i })).not.toHaveCount(0);
+      await expect(homePage.productNames.filter({ hasText: /hammer/i })).not.toHaveCount(0);
+      expect(await homePage.productNames.count()).toBeGreaterThan(hammerCount);
+    },
+  );
 
-  test('unchecking the category restores the full list', { tag: '@regression' }, async ({ page }) => {
-    const productNames = page.getByTestId('product-name');
-    const initialNames = await productNames.allTextContents();
+  test(
+    'unchecking the category restores the full list',
+    { tag: '@regression' },
+    async ({ homePage }) => {
+      const initialNames = await homePage.productNames.allTextContents();
 
-    await toggleCategory(page, 'Hammer');
-    await expect(productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+      await homePage.toggleCategory('Hammer');
+      await expect(homePage.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
 
-    await page.getByLabel('Hammer', { exact: true }).click();
-    await expect(productNames).toHaveText(initialNames.map((n) => n.trim()));
-  });
+      await homePage.toggleCategory('Hammer');
+      await expect(homePage.productNames).toHaveText(initialNames.map((n) => n.trim()));
+    },
+  );
 });
