@@ -1,5 +1,5 @@
-import { test, expect } from '../../src/fixtures/pages';
-import categoryData from '../../test-data/category-filter.json';
+import { test, expect } from '../../../src/fixtures/pages';
+import categoryData from '../../../test-data/category-filter.json';
 
 test.describe('Category filter', () => {
   test.beforeEach(async ({ homePage }) => {

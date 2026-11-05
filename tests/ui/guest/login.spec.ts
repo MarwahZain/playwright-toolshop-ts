@@ -1,5 +1,5 @@
-import { test, expect } from '../../src/fixtures/pages';
-import loginData from '../../test-data/login.json';
+import { test, expect } from '../../../src/fixtures/pages';
+import loginData from '../../../test-data/login.json';
 
 const emptyFieldCases = loginData.emptyFieldCases as {
   name: string;
@@ -16,7 +16,8 @@ test.describe('Login', () => {
 
   test(
     'customer can log in with valid credentials',
-    { tag: ['@smoke', '@regression'] },
+    // No @smoke: the public demo site serves a Cloudflare bot challenge to CI runners.
+    { tag: '@regression' },
     async ({ loginPage, accountPage }) => {
       await loginPage.login(loginData.validCustomer.email, loginData.validCustomer.password);
 
