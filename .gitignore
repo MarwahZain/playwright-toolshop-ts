@@ -8,3 +8,5 @@ playwright/.cache/
 allure-results/
 allure-report/
 .DS_Store
+# Temporary files from editor and file-sharing tools
+.fuse_hidden*

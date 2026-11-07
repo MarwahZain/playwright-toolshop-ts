@@ -8,6 +8,7 @@
     "password": "welcome01"
   },
   "customerName": "Jane Doe",
+  "adminName": "John Doe",
   "invalidCustomer": {
     "email": "customer3@practicesoftwaretesting.com",
     "password": "WrongPassword123"

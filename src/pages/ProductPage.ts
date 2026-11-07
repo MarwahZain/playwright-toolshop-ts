@@ -6,6 +6,8 @@ export class ProductPage {
   readonly header: HeaderComponent;
   readonly name: Locator;
   readonly unitPrice: Locator;
+  readonly category: Locator;
+  readonly brand: Locator;
   readonly quantity: Locator;
   readonly increaseQuantity: Locator;
   readonly decreaseQuantity: Locator;
@@ -16,6 +18,9 @@ export class ProductPage {
     this.header = new HeaderComponent(page);
     this.name = page.getByTestId('product-name');
     this.unitPrice = page.getByTestId('unit-price');
+    // The category and brand badges carry aria-label="category" and aria-label="brand".
+    this.category = page.getByLabel('category', { exact: true });
+    this.brand = page.getByLabel('brand', { exact: true });
     this.quantity = page.getByTestId('quantity');
     this.increaseQuantity = page.getByTestId('increase-quantity');
     this.decreaseQuantity = page.getByTestId('decrease-quantity');

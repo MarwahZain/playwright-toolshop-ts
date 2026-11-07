@@ -1,0 +1,298 @@
+[
+  {
+    "id": "NEG-01",
+    "resource": "brands",
+    "action": "create",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401,
+    "knownIssue": "Known bug: create succeeds without a token (issue #TBD)"
+  },
+  {
+    "id": "NEG-02",
+    "resource": "brands",
+    "action": "update",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401,
+    "knownIssue": "Known bug: update does not check the token, answers 404 instead of 401 (issue #TBD)"
+  },
+  {
+    "id": "NEG-03",
+    "resource": "brands",
+    "action": "delete",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401
+  },
+  {
+    "id": "NEG-04",
+    "resource": "categories",
+    "action": "create",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401,
+    "knownIssue": "Known bug: create succeeds without a token (issue #TBD)"
+  },
+  {
+    "id": "NEG-05",
+    "resource": "categories",
+    "action": "update",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401,
+    "knownIssue": "Known bug: update does not check the token, answers 404 instead of 401 (issue #TBD)"
+  },
+  {
+    "id": "NEG-06",
+    "resource": "categories",
+    "action": "delete",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401
+  },
+  {
+    "id": "NEG-07",
+    "resource": "products",
+    "action": "create",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401,
+    "knownIssue": "Known bug: create succeeds without a token (issue #TBD)"
+  },
+  {
+    "id": "NEG-08",
+    "resource": "products",
+    "action": "update",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401,
+    "knownIssue": "Known bug: update does not check the token, answers 404 instead of 401 (issue #TBD)"
+  },
+  {
+    "id": "NEG-09",
+    "resource": "products",
+    "action": "delete",
+    "auth": "none",
+    "description": "without a token",
+    "expectedStatus": 401
+  },
+  {
+    "id": "NEG-10",
+    "resource": "brands",
+    "action": "delete",
+    "auth": "customer",
+    "description": "as a customer",
+    "expectedStatus": 403
+  },
+  {
+    "id": "NEG-11",
+    "resource": "categories",
+    "action": "delete",
+    "auth": "customer",
+    "description": "as a customer",
+    "expectedStatus": 403
+  },
+  {
+    "id": "NEG-12",
+    "resource": "products",
+    "action": "delete",
+    "auth": "customer",
+    "description": "as a customer",
+    "expectedStatus": 403
+  },
+  {
+    "id": "NEG-13",
+    "resource": "brands",
+    "action": "get",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-14",
+    "resource": "brands",
+    "action": "update",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-15",
+    "resource": "brands",
+    "action": "delete",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-16",
+    "resource": "categories",
+    "action": "get",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-17",
+    "resource": "categories",
+    "action": "update",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-18",
+    "resource": "categories",
+    "action": "delete",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-19",
+    "resource": "products",
+    "action": "get",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-20",
+    "resource": "products",
+    "action": "update",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-21",
+    "resource": "products",
+    "action": "delete",
+    "auth": "admin",
+    "description": "with an unknown id",
+    "expectedStatus": 404
+  },
+  {
+    "id": "NEG-22",
+    "resource": "brands",
+    "action": "create",
+    "auth": "admin",
+    "description": "missing name",
+    "remove": ["name"],
+    "expectedStatus": 422,
+    "expectedField": "name"
+  },
+  {
+    "id": "NEG-23",
+    "resource": "brands",
+    "action": "create",
+    "auth": "admin",
+    "description": "missing slug",
+    "remove": ["slug"],
+    "expectedStatus": 422,
+    "expectedField": "slug"
+  },
+  {
+    "id": "NEG-24",
+    "resource": "brands",
+    "action": "create",
+    "auth": "admin",
+    "description": "duplicate slug",
+    "override": {
+      "slug": "forgeflex-tools"
+    },
+    "expectedStatus": 409
+  },
+  {
+    "id": "NEG-25",
+    "resource": "categories",
+    "action": "create",
+    "auth": "admin",
+    "description": "missing name",
+    "remove": ["name"],
+    "expectedStatus": 422,
+    "expectedField": "name"
+  },
+  {
+    "id": "NEG-26",
+    "resource": "categories",
+    "action": "create",
+    "auth": "admin",
+    "description": "missing slug",
+    "remove": ["slug"],
+    "expectedStatus": 422,
+    "expectedField": "slug"
+  },
+  {
+    "id": "NEG-27",
+    "resource": "products",
+    "action": "create",
+    "auth": "admin",
+    "description": "missing name",
+    "remove": ["name"],
+    "expectedStatus": 422,
+    "expectedField": "name"
+  },
+  {
+    "id": "NEG-28",
+    "resource": "products",
+    "action": "create",
+    "auth": "admin",
+    "description": "missing price",
+    "remove": ["price"],
+    "expectedStatus": 422,
+    "expectedField": "price"
+  },
+  {
+    "id": "NEG-29",
+    "resource": "products",
+    "action": "create",
+    "auth": "admin",
+    "description": "price is not a number",
+    "override": {
+      "price": "abc"
+    },
+    "expectedStatus": 422,
+    "expectedField": "price"
+  },
+  {
+    "id": "NEG-30",
+    "resource": "products",
+    "action": "create",
+    "auth": "admin",
+    "description": "negative price",
+    "override": {
+      "price": -5
+    },
+    "expectedStatus": 422,
+    "expectedField": "price",
+    "knownIssue": "Known bug: a product with a negative price is accepted (issue #TBD)"
+  },
+  {
+    "id": "NEG-31",
+    "resource": "products",
+    "action": "create",
+    "auth": "admin",
+    "description": "unknown category",
+    "override": {
+      "category_id": "01AAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "expectedStatus": 422,
+    "expectedField": "category_id",
+    "knownIssue": "Known bug: an unknown category_id causes a 500 instead of a 422 (issue #TBD)"
+  },
+  {
+    "id": "NEG-32",
+    "resource": "products",
+    "action": "create",
+    "auth": "admin",
+    "description": "unknown brand",
+    "override": {
+      "brand_id": "01AAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "expectedStatus": 422,
+    "expectedField": "brand_id",
+    "knownIssue": "Known bug: an unknown brand_id causes a 500 instead of a 422 (issue #TBD)"
+  }
+]

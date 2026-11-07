@@ -69,13 +69,21 @@ export class HomePage extends BasePage {
     );
   }
 
+  async toggleBrand(brand: string): Promise<Response> {
+    return waitForProducts(this.page, () => this.page.getByLabel(brand, { exact: true }).click());
+  }
+
   async sortBy(option: SortOption): Promise<Response> {
     return waitForProducts(this.page, () => this.sortSelect.selectOption(option));
   }
 
+  /** The card of the product with this name. Name and price are scoped to that card. */
+  card(name: string): ProductCardComponent {
+    return new ProductCardComponent(this.cards.filter({ hasText: name }).first());
+  }
+
   async openProduct(name: string): Promise<void> {
-    const card = new ProductCardComponent(this.cards.filter({ hasText: name }).first());
-    await card.open();
+    await this.card(name).open();
   }
 
   async getNames(): Promise<string[]> {
