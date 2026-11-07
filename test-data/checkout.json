@@ -1,0 +1,10 @@
+{
+  "billingAddress": {
+    "country": "Austria",
+    "postalCode": "1010",
+    "houseNumber": "42",
+    "street": "Test street 98",
+    "city": "Vienna",
+    "state": "Vienna"
+  }
+}

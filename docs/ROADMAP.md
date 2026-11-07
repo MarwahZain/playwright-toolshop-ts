@@ -2,7 +2,7 @@
 
 Ten milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M2 complete, M3 in progress.
+Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 ## M0: Bootstrap
 
@@ -51,12 +51,12 @@ Progress: M0 to M2 complete, M3 in progress.
 
 ## M4: API layer
 
-- [ ] API clients in `src/api` using the request fixture
-- [ ] CRUD tests on products, brands and categories
-- [ ] Negative cases: 401, 404, 422 validation
-- [ ] Response schema validation with zod
-- [ ] Hybrid: create a product through the API as admin, verify it in the UI
-- [ ] Hybrid: fill the cart through the API, finish checkout in the UI
+- [x] API clients in `src/api` using the request fixture
+- [x] CRUD tests on products, brands and categories
+- [x] Negative cases: 401, 404, 422 validation
+- [x] Response schema validation with zod
+- [ ] Hybrid: create a product through the API as admin, verify it in the UI (search tests open: the new product is not found by search)
+- [x] Hybrid: fill the cart through the API, finish checkout in the UI
 
 **Outcome:** a clear explanation of why hybrid tests are faster and less flaky than pure UI tests.
 

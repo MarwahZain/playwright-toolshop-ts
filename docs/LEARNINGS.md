@@ -62,6 +62,7 @@ Without this setting, Playwright looks for `data-testid` and finds nothing on To
 `git add .`
 `git commit -m "test: add valid customer login test"`
 `git push -u origin feat/m1-ui-tests`
+`--force-with-lease` replaces the remote branch, but only if it still contains exactly what you
 
 If an account does get locked, reseeding resets it:
 `docker exec -it pst-laravel-api-1 php artisan migrate:fresh --seed`
@@ -146,19 +147,19 @@ ajv is the most common JavaScript validator for those files.
 zod describes the shape in TypeScript code.
 No separate file format: the schema is a TypeScript object, and zod can generate the TypeScript type from it.
 **Comparing them**
-| Category | ajv                                        | zod     |
-| -------- | ------------------------------------------ |-------- |
-| Schema   | lives in .json files (JSON Schema standard)| TypeScript code|
-| TypeScript types | written separately, can drift from the schema | generated from the schema with z.infer|
-| Shared with other teams and languages | yes, any JSON Schema tool can read it| no, TypeScript only|
-| Fits best when | the backend team publishes schemas, for example from an OpenAPI spec| the test suite owns the schemas|
-| Error messages | precise but technical | readable: field path plus reason|
-| Closest Java equivalent | REST Assured + JSON Schema files | POJO + Bean Validation, in one|
-__Replaced `types.ts` with `zod schemas` so types are generated from the contract and can’t drift.”
 
-
+| Category                                                                                            | ajv                                                                  | zod                                    |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------- |
+| Schema                                                                                              | lives in .json files (JSON Schema standard)                          | TypeScript code                        |
+| TypeScript types                                                                                    | written separately, can drift from the schema                        | generated from the schema with z.infer |
+| Shared with other teams and languages                                                               | yes, any JSON Schema tool can read it                                | no, TypeScript only                    |
+| Fits best when                                                                                      | the backend team publishes schemas, for example from an OpenAPI spec | the test suite owns the schemas        |
+| Error messages                                                                                      | precise but technical                                                | readable: field path plus reason       |
+| Closest Java equivalent                                                                             | REST Assured + JSON Schema files                                     | POJO + Bean Validation, in one         |
+| __Replaced `types.ts` with `zod schemas` so types are generated from the contract and can’t drift.” |
 
 # Docker
+
 Restart and reseed. The sprint only changes after Docker restarts with the new setting:
 `docker compose up -d`
 `docker exec -it pst-laravel-api-1 php artisan migrate:fresh --seed`
