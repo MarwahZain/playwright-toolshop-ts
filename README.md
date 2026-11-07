@@ -13,7 +13,7 @@ The suite covers the UI with page objects, reusable components and custom fixtur
 ## Prerequisites
 
 - Node.js 20 or later
-- Toolshop running locally with Docker (UI on `localhost:4200`, API on `localhost:8091`), or access to the public demo site
+- Toolshop running locally with Docker (UI on `localhost:4200`, API on `localhost:8091`), see [docs/TOOLSHOP-LOCAL-SETUP.md](docs/TOOLSHOP-LOCAL-SETUP.md), or access to the public demo site
 
 ## Setup
 
@@ -37,6 +37,8 @@ These accounts are published by the Toolshop project and expose nothing. Credent
 npm test                                   # all projects
 npx playwright test --project=chromium     # guest tests in one browser
 npx playwright test --project=customer     # tests that start signed in as a customer
+npx playwright test --project=api          # API tests only
+npx playwright test --project=hybrid       # hybrid API + UI tests
 npx playwright test --grep @smoke          # smoke tests only
 npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
@@ -54,15 +56,19 @@ The `customer` and `admin` projects load those files, so their tests open the ap
 
 ```
 src/
+  api/                API clients, one per resource
   pages/              page objects
   pages/components/   header, cart badge, product card
   fixtures/           custom fixtures that provide page objects to tests
   utils/              shared helpers
   global-setup.ts     API login and saved sessions per role
 test-data/            JSON data for data-driven tests
+tests/api/            API tests, run without a browser
+tests/hybrid/         arrange through the API, assert in the browser
 tests/ui/guest/       UI tests that run signed out
 tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
+docs/TOOLSHOP-LOCAL-SETUP.md  running Toolshop locally with Docker
 docs/ROADMAP.md       milestones and progress
 docs/LEARNINGS.md     notes and lessons from building the suite
 ```

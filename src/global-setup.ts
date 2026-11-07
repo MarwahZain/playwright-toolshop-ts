@@ -1,4 +1,5 @@
 import { request } from '@playwright/test';
+import { AuthApi } from './api/AuthApi';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import loginData from '../test-data/login.json';
@@ -15,24 +16,6 @@ export function storageStatePath(role: Role): string {
   return path.join(AUTH_DIR, `storage-state.${role}.json`);
 }
 
-/** Logs in through POST /users/login and returns the JWT access token. */
-async function fetchAccessToken(apiURL: string, email: string, password: string): Promise<string> {
-  const api = await request.newContext({ baseURL: apiURL });
-  try {
-    const response = await api.post('/users/login', { data: { email, password } });
-    if (!response.ok()) {
-      throw new Error(`POST /users/login returned ${response.status()}: ${await response.text()}`);
-    }
-    const body = await response.json();
-    if (typeof body.access_token !== 'string') {
-      throw new Error(`login response has no access_token: ${JSON.stringify(body)}`);
-    }
-    return body.access_token;
-  } finally {
-    await api.dispose();
-  }
-}
-
 /**
  * Logs in through the API for the given role and writes a storageState file
  * with the token in localStorage, so specs start already signed in.
@@ -40,13 +23,13 @@ async function fetchAccessToken(apiURL: string, email: string, password: string)
  */
 async function saveStorageState(
   baseURL: string,
-  apiURL: string,
   role: Role,
   email: string,
   password: string,
 ): Promise<void> {
+  const api = await request.newContext();
   try {
-    const token = await fetchAccessToken(apiURL, email, password);
+    const token = await new AuthApi(api).getToken(email, password);
     const storageState = {
       cookies: [],
       origins: [
@@ -60,6 +43,8 @@ async function saveStorageState(
     await fs.writeFile(storageStatePath(role), JSON.stringify(storageState, null, 2));
   } catch (error) {
     throw new Error(`global-setup: could not log in as ${role} (${email}).`, { cause: error });
+  } finally {
+    await api.dispose();
   }
 }
 
@@ -81,6 +66,6 @@ export default async function globalSetup(): Promise<void> {
     );
   }
 
-  await saveStorageState(baseURL, apiURL, 'customer', customerEmail, customerPassword);
-  await saveStorageState(baseURL, apiURL, 'admin', adminEmail, adminPassword);
+  await saveStorageState(baseURL, 'customer', customerEmail, customerPassword);
+  await saveStorageState(baseURL, 'admin', adminEmail, adminPassword);
 }

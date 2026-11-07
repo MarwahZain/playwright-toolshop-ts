@@ -1,8 +1,8 @@
 # Roadmap
 
-Eight milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
+Ten milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M2 complete, M3 in progress.
+Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 ## M0: Bootstrap
 
@@ -51,12 +51,12 @@ Progress: M0 to M2 complete, M3 in progress.
 
 ## M4: API layer
 
-- [ ] API clients in `src/api` using the request fixture
-- [ ] CRUD tests on products, brands and categories
-- [ ] Negative cases: 401, 404, 422 validation
-- [ ] Response schema validation with zod
-- [ ] Hybrid: create a product through the API as admin, verify it in the UI
-- [ ] Hybrid: fill the cart through the API, finish checkout in the UI
+- [x] API clients in `src/api` using the request fixture
+- [x] CRUD tests on products, brands and categories
+- [x] Negative cases: 401, 404, 422 validation
+- [x] Response schema validation with zod
+- [ ] Hybrid: create a product through the API as admin, verify it in the UI (search tests open: the new product is not found by search)
+- [x] Hybrid: fill the cart through the API, finish checkout in the UI
 
 **Outcome:** a clear explanation of why hybrid tests are faster and less flaky than pure UI tests.
 
@@ -94,6 +94,34 @@ Progress: M0 to M2 complete, M3 in progress.
 - [ ] Stretch: a CI job that starts Toolshop with Docker Compose
 
 **Outcome:** a repo that shows real testing work, not only automation.
+
+## M8: API mocking
+
+- [ ] Mock fixture in `src/fixtures` that wraps `page.route` for `/products`
+- [ ] Return a fixed product list with `route.fulfill` and assert the grid renders it exactly
+- [ ] Modify a real response: fetch it with `route.fetch()`, change one price, fulfill the edited body
+- [ ] Error states: 500, 404 and an invalid JSON body, each showing a user-facing message
+- [ ] Slow API: delay the response and assert the loading state
+- [ ] Network failure: `route.abort()` and assert the app does not crash
+- [ ] Record a HAR file and replay it with `routeFromHAR` for an offline test
+- [ ] Tag mocked specs `@mocked` and keep them in `tests/mocked/`
+- [ ] LEARNINGS entry: when to mock and when to hit the real API
+
+**Outcome:** any UI state can be tested, including errors the real backend rarely produces, without touching real data.
+
+## M9: BDD with Gherkin
+
+- [ ] Install `playwright-bdd` and add a `bddgen` step before the test run
+- [ ] Feature file for login written from a user story, in `features/`
+- [ ] Step definitions that reuse the existing fixtures (`loginPage`, `homePage`)
+- [ ] Scenario Outline with an Examples table for search terms
+- [ ] Background steps for shared setup
+- [ ] Tags on scenarios mapped to `@smoke` and `@regression`
+- [ ] Generate features with the test-analyst skill, review them with the QA architect skill
+- [ ] Show feature and scenario names in the HTML report
+- [ ] README section: how BDD fits next to plain Playwright specs
+
+**Outcome:** business-readable feature files that run on the same page objects and fixtures as the rest of the suite.
 
 ## Git workflow
 
