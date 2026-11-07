@@ -16,6 +16,8 @@ export class HomePage extends BasePage {
   readonly productNames: Locator;
   readonly productPrices: Locator;
   readonly noResults: Locator;
+  readonly errorAlert: Locator;
+  readonly loadingIndicator: Locator;
   readonly pagination: Locator;
   readonly activePage: Locator;
 
@@ -28,6 +30,12 @@ export class HomePage extends BasePage {
     this.productNames = page.getByTestId('product-name');
     this.productPrices = page.getByTestId('product-price');
     this.noResults = page.getByTestId('no-results');
+    // An error should be announced with the accessible alert role.
+    this.errorAlert = page.getByRole('alert');
+    // While products load, the grid shows placeholder cards ("card skeleton"). They have no
+    // test id, role or aria-busy, so a CSS locator is the only option.
+    // eslint-disable-next-line playwright/no-raw-locators
+    this.loadingIndicator = page.locator('.card.skeleton');
     // No test id or role exposed for the pagination list, so a CSS locator is the only option.
     // eslint-disable-next-line playwright/no-raw-locators
     this.pagination = page.locator('ul.pagination');
