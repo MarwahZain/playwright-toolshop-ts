@@ -5,6 +5,7 @@ import { BrandsApi } from '../api/BrandsApi';
 import { CategoriesApi } from '../api/CategoriesApi';
 import { CartsApi } from '../api/CartsApi';
 import { InvoicesApi } from '../api/InvoicesApi';
+import { MessagesApi } from '../api/MessagesApi';
 import loginData from '../../test-data/login.json';
 
 type ApiFixtures = {
@@ -15,6 +16,8 @@ type ApiFixtures = {
   cartsApi: CartsApi;
   /** The customer's invoices, read with the customer's token. */
   invoicesApi: InvoicesApi;
+  /** Contact messages, read with the admin token. */
+  messagesApi: MessagesApi;
 };
 
 type WorkerFixtures = {
@@ -61,6 +64,7 @@ export const test = base.extend<ApiFixtures, WorkerFixtures>({
   categoriesApi: async ({ request, adminToken }, use) =>
     use(new CategoriesApi(request, adminToken)),
   cartsApi: async ({ request }, use) => use(new CartsApi(request)),
+  messagesApi: async ({ request, adminToken }, use) => use(new MessagesApi(request, adminToken)),
   invoicesApi: async ({ request, customerToken }, use) =>
     use(new InvoicesApi(request, customerToken)),
 });
