@@ -1,0 +1,42 @@
+[
+  {
+    "id": "PAY-01",
+    "description": "cash on delivery",
+    "payment": { "method": "cash-on-delivery" }
+  },
+  {
+    "id": "PAY-02",
+    "description": "bank transfer",
+    "payment": {
+      "method": "bank-transfer",
+      "bankName": "Test Bank",
+      "accountName": "Jane Doe",
+      "accountNumber": "1234567890"
+    }
+  },
+  {
+    "id": "PAY-03",
+    "description": "credit card",
+    "payment": {
+      "method": "credit-card",
+      "cardNumber": "1111-2222-3333-4444",
+      "expirationDate": "12/2030",
+      "cvv": "123",
+      "cardHolderName": "Jane Doe"
+    }
+  },
+  {
+    "id": "PAY-04",
+    "description": "buy now, pay later in 6 installments",
+    "payment": { "method": "buy-now-pay-later", "monthlyInstallments": "6" }
+  },
+  {
+    "id": "PAY-05",
+    "description": "gift card",
+    "payment": {
+      "method": "gift-card",
+      "giftCardNumber": "ABCD1234EFGH5678",
+      "validationCode": "AB12"
+    }
+  }
+]
