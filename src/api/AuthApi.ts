@@ -1,6 +1,6 @@
 import { APIResponse } from '@playwright/test';
 import { ApiClient } from './ApiClient';
-import { LoginRequest, LoginResponseSchema } from './schemas';
+import { LoginRequest, LoginResponseSchema, RegisterRequest } from './schemas';
 
 export class AuthApi extends ApiClient {
   async login(email: string, password: string): Promise<APIResponse> {
@@ -15,6 +15,15 @@ export class AuthApi extends ApiClient {
       throw new Error(`Login as ${email} failed: ${response.status()} ${await response.text()}`);
     }
     return LoginResponseSchema.parse(await response.json()).access_token;
+  }
+
+  async register(user: RegisterRequest): Promise<APIResponse> {
+    return this.request.post(this.url('/users/register'), { data: user });
+  }
+
+  /** Requests a password reset. Toolshop sets a new password and emails it (queued, sent once a minute). */
+  async forgotPassword(email: string): Promise<APIResponse> {
+    return this.request.post(this.url('/users/forgot-password'), { data: { email } });
   }
 
   /** Returns the signed-in user. Needs a client created with a token. */

@@ -11,7 +11,7 @@ if (!baseURL) {
 // pre-authenticated from the storage state written by global setup.
 const roleDirs = ['**/customer/**', '**/admin/**'];
 // Browser projects skip role specs and API specs; each has its own project.
-const notGuest = [...roleDirs, '**/api/**', '**/hybrid/**'];
+const notGuest = [...roleDirs, '**/api/**', '**/hybrid/**', '**/email/**'];
 
 export default defineConfig({
   testDir: './tests',
@@ -53,5 +53,9 @@ export default defineConfig({
 
     // Hybrid tests: arrange through the API, assert in a signed-out browser.
     { name: 'hybrid', testMatch: '**/hybrid/**/*.spec.ts', use: { ...devices['Desktop Chrome'] } },
+
+    // Email tests: read Toolshop's emails from MailCatcher (local Docker only). Chrome only,
+    // because each test waits up to a minute for the email queue.
+    { name: 'email', testMatch: '**/email/**/*.spec.ts', use: { ...devices['Desktop Chrome'] } },
   ],
 });

@@ -39,6 +39,7 @@ npx playwright test --project=chromium     # guest tests in one browser
 npx playwright test --project=customer     # tests that start signed in as a customer
 npx playwright test --project=api          # API tests only
 npx playwright test --project=hybrid       # hybrid API + UI tests
+npx playwright test --project=email        # email flows (needs local Docker with MailCatcher)
 npx playwright test --grep @smoke          # smoke tests only
 npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
@@ -65,6 +66,7 @@ src/
 test-data/            JSON data for data-driven tests
 tests/api/            API tests, run without a browser
 tests/hybrid/         arrange through the API, assert in the browser
+tests/email/          flows that send email, read from MailCatcher (local only)
 tests/ui/guest/       UI tests that run signed out
 tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
