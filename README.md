@@ -45,6 +45,24 @@ npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
 
+## Tags
+
+Tags decide when a test runs:
+
+| Tag           | Meaning                                                              |
+| ------------- | -------------------------------------------------------------------- |
+| `@regression` | every test; the full run                                             |
+| `@smoke`      | a few fast, read-only tests of the critical paths; run on every push |
+
+Every test carries `@regression`, and a small set also carries `@smoke`. `npm run check:tags` fails if any test is missing `@regression`.
+
+Other tags describe the kind of test, for filtering: `@api`, `@hybrid`, `@mocked`, `@email`, `@e2e`.
+
+```bash
+npx playwright test --grep @smoke --project=chromium
+npx playwright test --grep @regression
+```
+
 ## How authentication works
 
 `src/global-setup.ts` runs once before the test run. It logs in as customer and as admin through `POST /users/login` and writes each token to `.auth/storage-state.<role>.json`.

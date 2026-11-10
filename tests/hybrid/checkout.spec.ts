@@ -14,7 +14,7 @@ test.describe('Checkout with a cart filled through the API', () => {
 
   test(
     'the cart page shows the products, quantities and total from the API',
-    { tag: '@hybrid' },
+    { tag: ['@hybrid', '@regression'] },
     async ({ cartPage, filledCart }) => {
       await cartPage.open();
 
@@ -31,7 +31,7 @@ test.describe('Checkout with a cart filled through the API', () => {
 
   test(
     'a signed-in customer completes the checkout with cash on delivery',
-    { tag: '@hybrid' },
+    { tag: ['@hybrid', '@regression'] },
     async ({ cartPage, checkoutPage }) => {
       await cartPage.open();
       await cartPage.proceedToCheckout();

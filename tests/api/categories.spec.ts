@@ -6,7 +6,7 @@ import { uniqueSuffix } from '../../src/utils/unique';
 test.describe('Categories API', () => {
   test(
     'creates, reads, updates and deletes a category',
-    { tag: '@api' },
+    { tag: ['@api', '@regression'] },
     async ({ categoriesApi }) => {
       const id = uniqueSuffix();
       const created = await categoriesApi.create({
@@ -46,7 +46,7 @@ test.describe('Categories API', () => {
 
   test(
     'places a child category under its parent in the tree',
-    { tag: '@api' },
+    { tag: ['@api', '@regression'] },
     async ({ categoriesApi }) => {
       const tree = expectSchema(
         CategoryTreeResponseSchema,

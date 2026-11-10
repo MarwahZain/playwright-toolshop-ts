@@ -31,5 +31,10 @@ export default tseslint.config(
       'playwright/no-raw-locators': 'warn',
     },
   },
+  {
+    // Node scripts run outside the browser and the test runner.
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { globals: { console: 'readonly', process: 'readonly' } },
+  },
   prettier,
 );
