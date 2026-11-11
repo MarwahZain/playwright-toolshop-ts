@@ -11,7 +11,7 @@ if (!baseURL) {
 // pre-authenticated from the storage state written by global setup.
 const roleDirs = ['**/customer/**', '**/admin/**'];
 // Browser projects skip role specs and API specs; each has its own project.
-const notGuest = [...roleDirs, '**/api/**', '**/hybrid/**', '**/email/**'];
+const notGuest = [...roleDirs, '**/api/**', '**/hybrid/**', '**/email/**', '**/visual/**'];
 
 export default defineConfig({
   testDir: './tests',
@@ -57,5 +57,16 @@ export default defineConfig({
     // Email tests: read Toolshop's emails from MailCatcher (local Docker only). Chrome only,
     // because each test waits up to a minute for the email queue.
     { name: 'email', testMatch: '**/email/**/*.spec.ts', use: { ...devices['Desktop Chrome'] } },
+
+    // Visual snapshots: compared with committed baselines made in the Playwright Docker image
+    // (npm run visual / visual:update), so macOS and CI render the same way.
+    {
+      name: 'visual',
+      testMatch: '**/visual/**/*.spec.ts',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 720 } },
+      expect: {
+        toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled', caret: 'hide' },
+      },
+    },
   ],
 });

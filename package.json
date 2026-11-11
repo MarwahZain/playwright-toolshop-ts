@@ -8,7 +8,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check:tags": "node scripts/check-tags.mjs"
+    "check:tags": "node scripts/check-tags.mjs",
+    "visual": "docker run --rm --ipc=host -v \"$PWD\":/work -w /work -e VISUAL_DOCKER=1 -e BASE_URL=http://localhost:4200 -e API_URL=http://localhost:8091 mcr.microsoft.com/playwright:v1.64.1-noble sh -c \"node scripts/docker-forward.mjs & sleep 1 && npx playwright test --project=visual\"",
+    "visual:update": "docker run --rm --ipc=host -v \"$PWD\":/work -w /work -e VISUAL_DOCKER=1 -e BASE_URL=http://localhost:4200 -e API_URL=http://localhost:8091 mcr.microsoft.com/playwright:v1.64.1-noble sh -c \"node scripts/docker-forward.mjs & sleep 1 && npx playwright test --project=visual --update-snapshots\""
   },
   "keywords": [],
   "author": "",
