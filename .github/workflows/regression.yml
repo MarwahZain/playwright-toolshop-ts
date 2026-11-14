@@ -48,10 +48,14 @@ jobs:
           path: toolshop
 
       # docker-compose.override.yml is loaded automatically: it adds MailCatcher and the
-      # cron container that sends queued emails. phpMyAdmin is not needed, so not started.
+      # cron container that sends queued emails. phpMyAdmin is started too: the web
+      # server's config names it, and nginx refuses to start without it.
+      # The composer service is left out; the next step installs the packages instead.
       - name: Start Toolshop
         working-directory: toolshop
-        run: docker compose up -d laravel-api angular-ui web mariadb cron mailcatcher
+        run: |
+          docker compose up -d laravel-api angular-ui web mariadb cron mailcatcher phpmyadmin
+          docker compose ps
 
       - name: Install API dependencies
         working-directory: toolshop
@@ -73,7 +77,12 @@ jobs:
         run: docker compose exec -T laravel-api php artisan migrate:fresh --seed --force
 
       - name: Check the API
-        run: curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$API_URL/products" -o /dev/null
+        working-directory: toolshop
+        run: |
+          if curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$API_URL/products" -o /dev/null; then
+            echo "API ready"; exit 0
+          fi
+          docker compose ps -a; docker compose logs web laravel-api; exit 1
 
       # Runs while the UI container is still installing its own packages.
       - uses: actions/setup-node@v4
