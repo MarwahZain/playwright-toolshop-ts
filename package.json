@@ -4,10 +4,12 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke --project=chromium --project=customer --project=admin",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
     "check:tags": "node scripts/check-tags.mjs",
     "report:html": "playwright show-report",
     "report:allure": "allure generate allure-results --clean -o allure-report && allure open allure-report",

@@ -40,7 +40,7 @@ npx playwright test --project=customer     # tests that start signed in as a cus
 npx playwright test --project=api          # API tests only
 npx playwright test --project=hybrid       # hybrid API + UI tests
 npx playwright test --project=email        # email flows (needs local Docker with MailCatcher)
-npx playwright test --grep @smoke          # smoke tests only
+npm run test:smoke                         # smoke set: guest (Chromium), customer, admin
 npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
@@ -126,4 +126,13 @@ docs/LEARNINGS.md     notes and lessons from building the suite
 ```bash
 npm run lint
 npm run format:check
+npm run typecheck     # TypeScript type check (Playwright itself runs tests without checking types)
+npm run check:tags    # every test must have @regression
 ```
+
+## CI
+
+`.github/workflows/ci.yml` runs on every push to `main`, every pull request and on demand:
+
+1. **quality**: lint, format check, type check and tag check, without a browser.
+2. **smoke**: only if quality passes. The `@smoke` set (guest UI in Chromium, plus the customer and admin sessions) against the public demo site. The HTML report and the Allure results are kept as workflow artifacts for 14 days.
