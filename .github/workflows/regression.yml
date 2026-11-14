@@ -57,9 +57,14 @@ jobs:
           docker compose up -d laravel-api angular-ui web mariadb cron mailcatcher phpmyadmin
           docker compose ps
 
+      # The API runs as www-data and must write to storage/ (logs, cache). The checkout
+      # belongs to the runner's user, so hand the code to www-data, as Toolshop's own
+      # composer service does. Docker Desktop on a Mac hides this; a Linux runner does not.
       - name: Install API dependencies
         working-directory: toolshop
-        run: docker compose exec -T -u root laravel-api composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-ffi
+        run: |
+          docker compose exec -T -u root laravel-api composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-ffi
+          docker compose exec -T -u root laravel-api chown -R www-data:www-data /var/www
 
       - name: Wait for the database
         working-directory: toolshop
@@ -82,7 +87,9 @@ jobs:
           if curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$API_URL/products" -o /dev/null; then
             echo "API ready"; exit 0
           fi
-          docker compose ps -a; docker compose logs web laravel-api; exit 1
+          docker compose ps -a; docker compose logs web laravel-api
+          docker compose exec -T laravel-api tail -n 80 storage/logs/laravel.log || true
+          exit 1
 
       # Runs while the UI container is still installing its own packages.
       - uses: actions/setup-node@v4

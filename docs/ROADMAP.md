@@ -2,7 +2,7 @@
 
 Eleven milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M2 complete, M3 and M4 nearly complete.
+Progress: M0 to M5 complete (open: M3 runtime measurement, M4 search for a new product). M6 in progress.
 
 ## M0: Bootstrap
 
@@ -45,7 +45,7 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 - [x] Save storageState for admin and customer
 - [x] Separate Playwright projects per role
 - [ ] Measure suite runtime before and after, note it in the README
-- [ ] Tag release v0.1
+- [x] Tag release v0.1
 
 **Outcome:** role-based UI tests skip the login screen and the suite runs faster.
 
@@ -62,28 +62,44 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 ## M5: Advanced scenarios
 
-- [ ] Mock an empty product list with `page.route`
-- [ ] Mock a 500 error and a slow response
-- [ ] Full checkout across payment methods
-- [ ] Contact form with file upload
-- [ ] Forgot password: read the email through the MailCatcher API and assert its content
-- [ ] Tags `@smoke` and `@regression` on every test
-- [ ] Visual snapshot for one or two stable pages
-- [ ] Give tests that change account data their own user, registered through the API
+- [x] Mock an empty product list with `page.route`
+- [x] Mock a 500 error and a slow response
+- [x] Full checkout across payment methods
+- [x] Contact form with file upload
+- [x] Forgot password: read the email through the MailCatcher API and assert its content
+- [x] Tags `@smoke` and `@regression` on every test
+- [x] Visual snapshot for one or two stable pages
+- [x] Give tests that change account data their own user, registered through the API
 
 **Outcome:** the MailCatcher test and isolated test users set the repo apart from most Toolshop projects.
 
 ## M6: Reporting and CI
 
-- [ ] HTML and Allure reporters
-- [x] Smoke tests on every push against the public site
-- [ ] Full regression on a manual trigger
-- [x] Upload the report as a workflow artifact
-- [ ] Publish the Allure report to GitHub Pages
-- [ ] Parallel workers and sharding, retries only in CI
-- [ ] CI badge in the README, tag release v1.0
+Part A: configuration
 
-**Outcome:** a green CI badge and a published report.
+- [x] HTML and Allure reporters, Allure failure categories and environment info
+- [x] Trace and video kept on every failure
+- [x] Parallel workers and retries only in CI (2 workers, 1 retry)
+
+Part B: GitHub Actions
+
+- [x] CI gate on every push and PR: lint, format, type and tag checks, then smoke against the public site
+- [x] Upload the report as a workflow artifact
+- [ ] Smoke independent of shared public accounts (a fresh customer per run)
+- [ ] Full regression on a manual trigger, Toolshop in Docker on the runner (workflow written, first green run pending)
+- [ ] Sharding across 3 machines with one merged HTML report
+- [ ] Publish the Allure report with history to GitHub Pages, nightly schedule
+- [ ] Visual tests in CI, in the Playwright Docker image
+- [ ] `@readonly` tags and a public target for regression
+- [ ] CI badges in the README, tag release v1.0
+
+Part C: Jenkins
+
+- [ ] `Jenkinsfile`: lint, smoke, regression in parallel shards, reports (JUnit trends, HTML, Allure)
+- [ ] Jenkins in Docker on the Mac, connected to Toolshop's Docker network
+- [ ] `docs/JENKINS.md` and screenshots of a green run in the README
+
+**Outcome:** a green CI badge, a published report with history, and the same suite running in both GitHub Actions and Jenkins.
 
 ## M7: Lighthouse audits
 
