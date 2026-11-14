@@ -1,0 +1,126 @@
+# Full regression against Toolshop started in Docker on the runner, with a fresh database.
+# Increment 5a: one job, no shards. Shards, Allure on Pages, the visual job and the
+# public target follow in later increments.
+name: Regression
+
+on:
+  # TEMPORARY: GitHub shows the Run workflow button only once a workflow is on main.
+  # Until this branch is merged, each push to it runs the workflow. Remove before merging.
+  push:
+    branches: [ci/m6-reporting]
+  workflow_dispatch:
+    inputs:
+      sprint:
+        description: Toolshop version to test
+        type: choice
+        options: [sprint5, sprint5-with-bugs]
+        default: sprint5
+
+# One full run at a time; a new run waits instead of cancelling the one in progress.
+concurrency:
+  group: regression
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Pinned Toolshop commit, the same one the local setup uses. Update it on purpose.
+  TOOLSHOP_REF: ae7caecb811dd8952c09d997e69be7cb946ecd44
+  SPRINT: ${{ inputs.sprint || 'sprint5' }}
+  BASE_URL: http://localhost:4200
+  API_URL: http://localhost:8091
+  MAILCATCHER_URL: http://localhost:1080
+
+jobs:
+  test:
+    name: full suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out Toolshop
+        uses: actions/checkout@v4
+        with:
+          repository: testsmith-io/practice-software-testing
+          ref: ${{ env.TOOLSHOP_REF }}
+          path: toolshop
+
+      # docker-compose.override.yml is loaded automatically: it adds MailCatcher and the
+      # cron container that sends queued emails. phpMyAdmin is not needed, so not started.
+      - name: Start Toolshop
+        working-directory: toolshop
+        run: docker compose up -d laravel-api angular-ui web mariadb cron mailcatcher
+
+      - name: Install API dependencies
+        working-directory: toolshop
+        run: docker compose exec -T -u root laravel-api composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-ffi
+
+      - name: Wait for the database
+        working-directory: toolshop
+        run: |
+          for i in $(seq 1 60); do
+            if docker compose exec -T mariadb mysqladmin ping -h localhost -u root -proot --silent; then
+              echo "Database ready"; exit 0
+            fi
+            sleep 2
+          done
+          echo "Database not ready after 2 minutes"; docker compose logs mariadb; exit 1
+
+      - name: Create and seed the database
+        working-directory: toolshop
+        run: docker compose exec -T laravel-api php artisan migrate:fresh --seed --force
+
+      - name: Check the API
+        run: curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$API_URL/products" -o /dev/null
+
+      # Runs while the UI container is still installing its own packages.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Wait for the UI
+        working-directory: toolshop
+        run: |
+          for i in $(seq 1 120); do
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL")" = "200" ]; then
+              echo "UI ready"; exit 0
+            fi
+            sleep 5
+          done
+          echo "UI not ready after 10 minutes"; docker compose logs angular-ui; exit 1
+
+      - name: Run the full suite
+        run: npx playwright test
+
+      - name: Upload HTML report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+      - name: Upload Allure results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 14
+
+      - name: Collect Toolshop logs
+        if: ${{ failure() }}
+        working-directory: toolshop
+        run: docker compose logs --no-color > ../toolshop-logs.txt
+      - name: Upload Toolshop logs
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: toolshop-logs
+          path: toolshop-logs.txt
+          retention-days: 14

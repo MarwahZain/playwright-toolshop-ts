@@ -136,3 +136,5 @@ npm run check:tags    # every test must have @regression
 
 1. **quality**: lint, format check, type check and tag check, without a browser.
 2. **smoke**: only if quality passes. The `@smoke` set (guest UI in Chromium, plus the customer and admin sessions) against the public demo site. The HTML report and the Allure results are kept as workflow artifacts for 14 days.
+
+`.github/workflows/regression.yml` runs the full suite on demand (Actions, Regression, Run workflow). It starts Toolshop in Docker on the runner at a pinned commit, seeds a fresh database and runs every project against `localhost`. Choose `sprint5` or `sprint5-with-bugs` when starting it. Reports are kept as artifacts; on failure the Toolshop container logs are attached too.
