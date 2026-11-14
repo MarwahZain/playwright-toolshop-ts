@@ -20,7 +20,8 @@ const IN_STOCK_ISSUE =
 test.describe('Products API: read', () => {
   test(
     'lists products with paging metadata',
-    { tag: ['@smoke', '@api'] },
+    // Not @smoke while the in_stock known bug makes it an expected failure; add @smoke back once fixed.
+    { tag: ['@api', '@regression'] },
     async ({ productsApi }) => {
       test.fail(true, IN_STOCK_ISSUE);
 
@@ -34,42 +35,50 @@ test.describe('Products API: read', () => {
     },
   );
 
-  test('returns a single product by id', { tag: '@api' }, async ({ productsApi }) => {
-    test.fail(true, IN_STOCK_ISSUE);
+  test(
+    'returns a single product by id',
+    { tag: ['@api', '@regression'] },
+    async ({ productsApi }) => {
+      test.fail(true, IN_STOCK_ISSUE);
 
-    const list = expectSchema(ProductListResponseSchema, await (await productsApi.list()).json());
-    const first = list.data[0];
+      const list = expectSchema(ProductListResponseSchema, await (await productsApi.list()).json());
+      const first = list.data[0];
 
-    const response = await productsApi.get(first.id);
+      const response = await productsApi.get(first.id);
 
-    expect(response.status()).toBe(200);
-    const product = expectSchema(ProductResponseSchema, await response.json());
-    expect(product.id).toBe(first.id);
-    expect(product.name).toBe(first.name);
-    expect(product.price).toBe(first.price);
-  });
+      expect(response.status()).toBe(200);
+      const product = expectSchema(ProductResponseSchema, await response.json());
+      expect(product.id).toBe(first.id);
+      expect(product.name).toBe(first.name);
+      expect(product.price).toBe(first.price);
+    },
+  );
 
-  test('filters products by category', { tag: '@api' }, async ({ productsApi }) => {
-    test.fail(true, IN_STOCK_ISSUE);
+  test(
+    'filters products by category',
+    { tag: ['@api', '@regression'] },
+    async ({ productsApi }) => {
+      test.fail(true, IN_STOCK_ISSUE);
 
-    const { category_id } = await existingReferences(productsApi);
+      const { category_id } = await existingReferences(productsApi);
 
-    const body = expectSchema(
-      ProductListResponseSchema,
-      await (await productsApi.list({ by_category: category_id })).json(),
-    );
+      const body = expectSchema(
+        ProductListResponseSchema,
+        await (await productsApi.list({ by_category: category_id })).json(),
+      );
 
-    expect(body.data.length).toBeGreaterThan(0);
-    for (const product of body.data) {
-      expect(product.category.id).toBe(category_id);
-    }
-  });
+      expect(body.data.length).toBeGreaterThan(0);
+      for (const product of body.data) {
+        expect(product.category.id).toBe(category_id);
+      }
+    },
+  );
 });
 
 test.describe('Products API: write', () => {
   test(
     'creates, reads, updates and deletes a product',
-    { tag: '@api' },
+    { tag: ['@api', '@regression'] },
     async ({ productsApi }) => {
       test.fail(true, IN_STOCK_ISSUE);
 
@@ -110,7 +119,7 @@ test.describe('Products API: write', () => {
 
   test(
     'does not delete a brand that a product still uses',
-    { tag: '@api' },
+    { tag: ['@api', '@regression'] },
     async ({ productsApi, brandsApi }) => {
       const id = uniqueSuffix();
       const brand = expectSchema(

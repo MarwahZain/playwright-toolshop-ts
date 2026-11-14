@@ -1,0 +1,128 @@
+[
+  {
+    "id": "CON-01",
+    "who": "guest",
+    "description": "sends a message with an empty .txt file",
+    "contact": {
+      "firstName": "Qa",
+      "lastName": "Tester",
+      "email": "qa.tester@example.com",
+      "subject": "customer-service"
+    },
+    "attachment": {
+      "name": "notes.txt",
+      "mimeType": "text/plain",
+      "content": ""
+    },
+    "expected": {
+      "sent": true,
+      "uploadStatus": 200
+    }
+  },
+  {
+    "id": "CON-02",
+    "who": "guest",
+    "description": "sends a message without a file",
+    "contact": {
+      "firstName": "Qa",
+      "lastName": "Tester",
+      "email": "qa.tester@example.com",
+      "subject": "customer-service"
+    },
+    "expected": {
+      "sent": true
+    }
+  },
+  {
+    "id": "CON-03",
+    "who": "guest",
+    "description": "rejects a .txt file that is not empty",
+    "contact": {
+      "firstName": "Qa",
+      "lastName": "Tester",
+      "email": "qa.tester@example.com",
+      "subject": "customer-service"
+    },
+    "attachment": {
+      "name": "notes.txt",
+      "mimeType": "text/plain",
+      "content": "hello"
+    },
+    "expected": {
+      "sent": false,
+      "field": "attachment",
+      "error": "File should be empty."
+    }
+  },
+  {
+    "id": "CON-04",
+    "who": "guest",
+    "description": "rejects a file that is not .txt",
+    "contact": {
+      "firstName": "Qa",
+      "lastName": "Tester",
+      "email": "qa.tester@example.com",
+      "subject": "customer-service"
+    },
+    "attachment": {
+      "name": "notes.pdf",
+      "mimeType": "application/pdf",
+      "content": ""
+    },
+    "expected": {
+      "sent": false,
+      "field": "attachment",
+      "error": "File should have a txt extension."
+    }
+  },
+  {
+    "id": "CON-05",
+    "who": "guest",
+    "description": "rejects a message under 50 characters",
+    "contact": {
+      "firstName": "Qa",
+      "lastName": "Tester",
+      "email": "qa.tester@example.com",
+      "subject": "customer-service"
+    },
+    "message": "This message is one character too short to send..",
+    "expected": {
+      "sent": false,
+      "field": "message",
+      "error": "Message must be minimal 50 characters"
+    }
+  },
+  {
+    "id": "CON-06",
+    "who": "guest",
+    "description": "rejects a message without a subject",
+    "contact": {
+      "firstName": "Qa",
+      "lastName": "Tester",
+      "email": "qa.tester@example.com",
+      "subject": ""
+    },
+    "expected": {
+      "sent": false,
+      "field": "subject",
+      "error": "Subject is required"
+    }
+  },
+  {
+    "id": "CON-07",
+    "who": "customer",
+    "description": "sends a message as a signed-in customer",
+    "contact": {
+      "subject": "status-of-order"
+    },
+    "attachment": {
+      "name": "notes.txt",
+      "mimeType": "text/plain",
+      "content": ""
+    },
+    "expected": {
+      "sent": true,
+      "uploadStatus": 200
+    }
+  }
+]

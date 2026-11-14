@@ -39,10 +39,42 @@ npx playwright test --project=chromium     # guest tests in one browser
 npx playwright test --project=customer     # tests that start signed in as a customer
 npx playwright test --project=api          # API tests only
 npx playwright test --project=hybrid       # hybrid API + UI tests
+npx playwright test --project=email        # email flows (needs local Docker with MailCatcher)
 npx playwright test --grep @smoke          # smoke tests only
 npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
+
+## Tags
+
+Tags decide when a test runs:
+
+| Tag           | Meaning                                                              |
+| ------------- | -------------------------------------------------------------------- |
+| `@regression` | every test; the full run                                             |
+| `@smoke`      | a few fast, read-only tests of the critical paths; run on every push |
+
+Every test carries `@regression`, and a small set also carries `@smoke`. `npm run check:tags` fails if any test is missing `@regression`.
+
+Other tags describe the kind of test, for filtering: `@api`, `@hybrid`, `@mocked`, `@email`, `@e2e`.
+
+```bash
+npx playwright test --grep @smoke --project=chromium
+npx playwright test --grep @regression
+```
+
+## Visual snapshots
+
+`tests/visual/` compares the login and contact pages pixel by pixel with approved baseline images. Fonts render differently on macOS and Linux, so baselines are made and compared inside the official Playwright Docker image, never directly on macOS (there the tests are skipped).
+
+```bash
+npm run visual          # compare with the baselines (Docker must be running)
+npm run visual:update   # approve an intended change: regenerate the baselines, review, commit
+```
+
+On a failure, the HTML report shows the expected image, the actual one and a diff.
+
+Inside the container, `scripts/docker-forward.mjs` forwards `localhost:4200` and `localhost:8091` to the Mac, because the shop's dev server only accepts requests addressed to `localhost`.
 
 ## How authentication works
 
@@ -65,6 +97,8 @@ src/
 test-data/            JSON data for data-driven tests
 tests/api/            API tests, run without a browser
 tests/hybrid/         arrange through the API, assert in the browser
+tests/email/          flows that send email, read from MailCatcher (local only)
+tests/visual/         visual snapshots, run in the Playwright Docker image
 tests/ui/guest/       UI tests that run signed out
 tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin

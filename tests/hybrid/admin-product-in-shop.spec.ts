@@ -66,7 +66,7 @@ const test = base.extend<{ shopData: ShopData }>({
 test.describe('Admin-created product in the shop', () => {
   test(
     'appears in search with its name and price',
-    { tag: '@hybrid' },
+    { tag: ['@hybrid', '@regression'] },
     async ({ homePage, shopData: { product } }) => {
       test.fixme(
         true,
@@ -84,7 +84,7 @@ test.describe('Admin-created product in the shop', () => {
 
   test(
     'shows its name, price, brand and category on the product page',
-    { tag: '@hybrid' },
+    { tag: ['@hybrid', '@regression'] },
     async ({ homePage, productPage, shopData: { brand, product } }) => {
       await homePage.openAndWaitForProducts();
       // Reached through the brand filter: search is under investigation (see the search test).
@@ -100,7 +100,7 @@ test.describe('Admin-created product in the shop', () => {
 
   test(
     'is listed under its brand in the brand filter',
-    { tag: '@hybrid' },
+    { tag: ['@hybrid', '@regression'] },
     async ({ homePage, shopData: { brand, product } }) => {
       await homePage.openAndWaitForProducts();
       await homePage.toggleBrand(brand.name);

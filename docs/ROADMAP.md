@@ -1,6 +1,6 @@
 # Roadmap
 
-Ten milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
+Eleven milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
 Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
@@ -85,7 +85,20 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 **Outcome:** a green CI badge and a published report.
 
-## M7: Showcase
+## M7: Lighthouse audits
+
+- [ ] Choose the integration: `playwright-lighthouse` inside the suite (reuses fixtures and saved sessions) or Lighthouse CI (`@lhci/cli`) as a separate CI step
+- [ ] A `lighthouse` project: Chromium only, 1 worker, tag `@lighthouse` (Lighthouse needs the remote debugging port and a quiet machine)
+- [ ] Audit key pages: home, product details, login, contact; stretch: one page with a customer session
+- [ ] Thresholds per category (performance, accessibility, best practices, SEO) in one config file; the test fails below them
+- [ ] Performance scores from a dev server are low and noisy: set that threshold from a baseline of 3 runs, keep accessibility strict
+- [ ] Save the HTML report per page and attach it to the Playwright report
+- [ ] Run in the regression workflow against Toolshop in Docker, publish the reports next to Allure
+- [ ] Log real accessibility findings as GitHub issues; LEARNINGS entry on reading and stabilising Lighthouse scores
+
+**Outcome:** performance, accessibility, best practice and SEO scores for the key pages, checked against thresholds on every regression run.
+
+## M8: Showcase
 
 - [ ] Run the suite against `sprint5-with-bugs` and log each real bug as a GitHub issue
 - [ ] Optional: one Gherkin feature with `playwright-bdd`
@@ -95,7 +108,7 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 **Outcome:** a repo that shows real testing work, not only automation.
 
-## M8: API mocking
+## M9: API mocking
 
 - [ ] Mock fixture in `src/fixtures` that wraps `page.route` for `/products`
 - [ ] Return a fixed product list with `route.fulfill` and assert the grid renders it exactly
@@ -109,7 +122,7 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 **Outcome:** any UI state can be tested, including errors the real backend rarely produces, without touching real data.
 
-## M9: BDD with Gherkin
+## M10: BDD with Gherkin
 
 - [ ] Install `playwright-bdd` and add a `bddgen` step before the test run
 - [ ] Feature file for login written from a user story, in `features/`

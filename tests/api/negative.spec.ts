@@ -114,7 +114,7 @@ test.describe('API negative cases', () => {
     test(
       `${row.id} ${row.resource} ${row.action} ${row.description} returns ${row.expectedStatus}`,
       {
-        tag: '@api',
+        tag: ['@api', '@regression'],
         annotation: row.knownIssue ? [{ type: 'known issue', description: row.knownIssue }] : [],
       },
       async ({ request, productsApi, adminToken, customerToken }) => {
