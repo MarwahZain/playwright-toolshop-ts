@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 import { storageStatePath } from './src/global-setup';
+import { allureCategories, allureEnvironment } from './src/reporting/allure';
 
 const baseURL = process.env.BASE_URL;
 if (!baseURL) {
@@ -20,7 +21,21 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html', { open: 'never' }]],
+  // list: console progress; html: debug one run; allure: trends and failure categories
+  // (npm run report:allure); github: failure annotations on pull requests.
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+    [
+      'allure-playwright',
+      {
+        resultsDir: 'allure-results',
+        categories: allureCategories,
+        environmentInfo: allureEnvironment(baseURL),
+      },
+    ],
+    ...(process.env.CI ? [['github'] as const] : []),
+  ],
 
   use: {
     baseURL,

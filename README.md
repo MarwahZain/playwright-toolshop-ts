@@ -45,6 +45,17 @@ npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
 
+## Reports
+
+Every run writes two reports:
+
+| Report                                        | For                                                                              | Open with                            |
+| --------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------ |
+| Playwright HTML (`playwright-report/`)        | Debugging one run: errors, screenshots, traces                                   | `npm run report:html`                |
+| Allure (`allure-results/` → `allure-report/`) | The quality picture: suites, tags, failure categories, environment, trends in CI | `npm run report:allure` (needs Java) |
+
+Allure sorts failures into categories defined in `src/reporting/allure.ts`: visual differences, contract mismatches, element not found, timeouts, other assertion failures (likely product defects) and other errors (test code or environment). Tests marked as known bugs pass while the bug is present, so they do not show up as failures.
+
 ## Tags
 
 Tags decide when a test runs:
@@ -93,6 +104,7 @@ src/
   pages/components/   header, cart badge, product card
   fixtures/           custom fixtures that provide page objects to tests
   utils/              shared helpers
+  reporting/          Allure failure categories and environment info
   global-setup.ts     API login and saved sessions per role
 test-data/            JSON data for data-driven tests
 tests/api/            API tests, run without a browser

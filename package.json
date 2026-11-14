@@ -9,6 +9,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:tags": "node scripts/check-tags.mjs",
+    "report:html": "playwright show-report",
+    "report:allure": "allure generate allure-results --clean -o allure-report && allure open allure-report",
     "visual": "docker run --rm --ipc=host -v \"$PWD\":/work -w /work -e VISUAL_DOCKER=1 -e BASE_URL=http://localhost:4200 -e API_URL=http://localhost:8091 mcr.microsoft.com/playwright:v1.64.1-noble sh -c \"node scripts/docker-forward.mjs & sleep 1 && npx playwright test --project=visual\"",
     "visual:update": "docker run --rm --ipc=host -v \"$PWD\":/work -w /work -e VISUAL_DOCKER=1 -e BASE_URL=http://localhost:4200 -e API_URL=http://localhost:8091 mcr.microsoft.com/playwright:v1.64.1-noble sh -c \"node scripts/docker-forward.mjs & sleep 1 && npx playwright test --project=visual --update-snapshots\""
   },
@@ -20,6 +22,9 @@
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
+    "allure-commandline": "^2.46.1",
+    "allure-js-commons": "^3.14.0",
+    "allure-playwright": "^3.14.0",
     "dotenv": "^18.0.9",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^6.15.0",
