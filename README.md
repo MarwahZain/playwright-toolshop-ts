@@ -56,6 +56,8 @@ Every run writes two reports:
 
 Allure sorts failures into categories defined in `src/reporting/allure.ts`: visual differences, contract mismatches, element not found, timeouts, other assertion failures (likely product defects) and other errors (test code or environment). Tests marked as known bugs pass while the bug is present, so they do not show up as failures.
 
+Every failed test keeps a screenshot, a video and a Playwright trace (open it from either report, or with `npx playwright show-trace <file>`). In CI a failed test is retried once; a test that passes on retry is reported as flaky.
+
 ## Tags
 
 Tags decide when a test runs:

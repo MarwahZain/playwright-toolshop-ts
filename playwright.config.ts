@@ -19,8 +19,11 @@ export default defineConfig({
   globalSetup: './src/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // One retry in CI absorbs a real hiccup; a test that passes on retry is reported as flaky.
+  // Locally a failure fails at once.
+  retries: process.env.CI ? 1 : 0,
+  // Locally: half the CPU cores. CI: 2, leaving room for the Toolshop containers on the same runner.
+  workers: process.env.CI ? 2 : undefined,
   // list: console progress; html: debug one run; allure: trends and failure categories
   // (npm run report:allure); github: failure annotations on pull requests.
   reporter: [
@@ -40,7 +43,9 @@ export default defineConfig({
   use: {
     baseURL,
     testIdAttribute: 'data-test',
-    trace: 'on-first-retry',
+    // Record every test, keep the evidence only when it fails.
+    trace: 'retain-on-failure',
+    video: 'retain-on-failure',
     screenshot: 'only-on-failure',
     //headless: !!process.env.CI,   // headed locally, headless in CI
   },
