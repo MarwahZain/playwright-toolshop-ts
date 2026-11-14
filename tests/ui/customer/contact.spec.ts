@@ -2,7 +2,7 @@ import { test, expect } from '../../../src/fixtures/hybrid';
 import { MessageResponseSchema } from '../../../src/api/schemas';
 import { expectSchema } from '../../../src/utils/schema';
 import { ContactCase, toFile, uniqueMessage } from '../../../src/utils/contact-data';
-import loginData from '../../../test-data/login.json';
+import { customer } from '../../../src/config/accounts';
 import dataset from '../../../test-data/contact.json';
 
 /**
@@ -21,7 +21,7 @@ for (const row of rows) {
       await contactPage.open();
 
       // The form knows who is signed in
-      await expect(contactPage.greeting).toContainText(loginData.customerName);
+      await expect(contactPage.greeting).toContainText(customer.name);
       await expect(contactPage.firstName).toBeHidden();
       await expect(contactPage.email).toBeHidden();
 
@@ -37,7 +37,7 @@ for (const row of rows) {
       const found = await messagesApi.findByText(marker);
       expect(found, `a message containing "${marker}" should be stored`).toBeDefined();
       const message = expectSchema(MessageResponseSchema, found);
-      expect(message.name).toBe(loginData.customerName);
+      expect(message.name).toBe(customer.name);
       expect(message.user_id, 'the message should belong to the customer').toBeTruthy();
       expect(message.subject).toBe(row.contact.subject);
     },

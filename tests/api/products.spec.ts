@@ -21,7 +21,7 @@ test.describe('Products API: read', () => {
   test(
     'lists products with paging metadata',
     // Not @smoke while the in_stock known bug makes it an expected failure; add @smoke back once fixed.
-    { tag: ['@api', '@regression'] },
+    { tag: ['@api', '@readonly', '@regression'] },
     async ({ productsApi }) => {
       test.fail(true, IN_STOCK_ISSUE);
 
@@ -37,7 +37,7 @@ test.describe('Products API: read', () => {
 
   test(
     'returns a single product by id',
-    { tag: ['@api', '@regression'] },
+    { tag: ['@api', '@readonly', '@regression'] },
     async ({ productsApi }) => {
       test.fail(true, IN_STOCK_ISSUE);
 
@@ -56,7 +56,7 @@ test.describe('Products API: read', () => {
 
   test(
     'filters products by category',
-    { tag: ['@api', '@regression'] },
+    { tag: ['@api', '@readonly', '@regression'] },
     async ({ productsApi }) => {
       test.fail(true, IN_STOCK_ISSUE);
 

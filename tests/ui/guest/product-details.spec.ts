@@ -8,7 +8,7 @@ import productData from '../../../test-data/products.json';
  */
 for (const [index, product] of productData.products.entries()) {
   // One product page is enough for the smoke set; every row runs in regression.
-  const tags = index === 0 ? ['@smoke', '@regression'] : ['@regression'];
+  const tags = index === 0 ? ['@smoke', '@readonly', '@regression'] : ['@readonly', '@regression'];
 
   test.describe(`Product details: ${product.name}`, () => {
     test.beforeEach(async ({ homePage }) => {
@@ -23,6 +23,7 @@ for (const [index, product] of productData.products.entries()) {
       expect(await productPage.getUnitPrice()).toBe(product.price);
     });
 
+    // Not @readonly: adding to the cart creates a cart on the server.
     test(
       'adding to cart updates the cart badge',
       { tag: '@regression' },

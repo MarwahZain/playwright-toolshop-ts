@@ -23,11 +23,33 @@ npx playwright install
 cp .env.example .env
 ```
 
-`.env` holds the target environment. It points to the local Docker stack by default; switch the commented lines to run against the public site at `practicesoftwaretesting.com`.
+`.env` sets `TEST_ENV` (default `local`) and, optionally, other accounts. See [Environments](#environments).
+
+## Environments
+
+One variable decides where the suite runs, the way Spring profiles pick a configuration:
+
+```bash
+npx playwright test                    # local (default)
+TEST_ENV=uat npx playwright test       # the same suite against UAT
+TEST_ENV=sit npm run test:smoke        # the smoke set against SIT
+```
+
+| `TEST_ENV` | Application                                                               | Data     | Tests that run |
+| ---------- | ------------------------------------------------------------------------- | -------- | -------------- |
+| `local`    | Toolshop in Docker on your machine (localhost:4200 / 8091)                | your own | all            |
+| `qa`       | Toolshop in Docker on the CI runner, fresh database per run               | fresh    | all            |
+| `sit`      | https://with-bugs.practicesoftwaretesting.com (a version with known bugs) | shared   | `@readonly`    |
+| `uat`      | https://practicesoftwaretesting.com (stable)                              | shared   | `@readonly`    |
+
+- URLs live only in `src/config/environments.ts`. `BASE_URL` and `API_URL` are ignored (with a warning), so a leftover value can never point a run at the wrong place.
+- On shared environments the config runs only `@readonly` tests: tests that read and cannot change shared state. Creating data, checkout, contact messages, email, visual tests and wrong-password logins (they count towards an account lockout) are not `@readonly`.
+- A `--grep` on the command line replaces that filter, so every `@smoke` test must also be `@readonly`; `npm run check:tags` enforces it.
+- On `sit`, failures are expected: it runs the version of Toolshop with built-in bugs.
 
 ### Credentials
 
-Credentials default to Toolshop's public seed accounts in `test-data/login.json`, so the suite runs right after cloning. Override them in `.env` for any other environment.
+Accounts come from `src/config/accounts.ts`: `CUSTOMER_EMAIL`, `CUSTOMER_PASSWORD`, `CUSTOMER_NAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` if set, otherwise Toolshop's public seed accounts in `test-data/login.json`, so the suite runs right after cloning. Tests read the customer's name from there too, so another account needs no code change.
 
 These accounts are published by the Toolshop project and expose nothing. Credentials for a real environment do not belong in the repo: keep them in `.env` locally and in GitHub Secrets for CI.
 
@@ -66,10 +88,11 @@ Tags decide when a test runs:
 | ------------- | -------------------------------------------------------------------- |
 | `@regression` | every test; the full run                                             |
 | `@smoke`      | a few fast, read-only tests of the critical paths; run on every push |
+| `@readonly`   | safe on shared environments: reads only, changes no shared state     |
 
-Every test carries `@regression`, and a small set also carries `@smoke`. `npm run check:tags` fails if any test is missing `@regression`.
+Every test carries `@regression`, and a small set also carries `@smoke`. `npm run check:tags` fails if a test is missing `@regression`, or if a `@smoke` test is not `@readonly`.
 
-Other tags describe the kind of test, for filtering: `@api`, `@hybrid`, `@mocked`, `@email`, `@e2e`.
+Other tags describe the kind of test, for filtering: `@api`, `@hybrid`, `@mocked`, `@email`, `@e2e`, `@visual`.
 
 ```bash
 npx playwright test --grep @smoke --project=chromium
@@ -106,6 +129,7 @@ src/
   pages/components/   header, cart badge, product card
   fixtures/           custom fixtures that provide page objects to tests
   utils/              shared helpers
+  config/             environments (TEST_ENV) and accounts
   reporting/          Allure failure categories and environment info
   global-setup.ts     API login and saved sessions per role
 test-data/            JSON data for data-driven tests
@@ -127,7 +151,7 @@ docs/LEARNINGS.md     notes and lessons from building the suite
 npm run lint
 npm run format:check
 npm run typecheck     # TypeScript type check (Playwright itself runs tests without checking types)
-npm run check:tags    # every test must have @regression
+npm run check:tags    # every test has @regression, every @smoke test is @readonly
 ```
 
 ## CI

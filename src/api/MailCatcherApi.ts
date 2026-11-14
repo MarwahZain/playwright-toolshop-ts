@@ -1,5 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 import { z } from 'zod';
+import { testEnv } from '../config/environments';
 
 /** One email as MailCatcher lists it (GET /messages). */
 const CaughtEmailSchema = z.object({
@@ -17,9 +18,16 @@ export type CaughtEmail = z.infer<typeof CaughtEmailSchema>;
  * The inbox is never emptied: other tests may be waiting for their own emails.
  */
 export class MailCatcherApi {
-  private readonly baseURL = process.env.MAILCATCHER_URL || 'http://localhost:1080';
+  private readonly baseURL: string;
 
-  constructor(private readonly request: APIRequestContext) {}
+  constructor(private readonly request: APIRequestContext) {
+    if (!testEnv.mailCatcherURL) {
+      throw new Error(
+        `MailCatcher is not available on "${testEnv.name}"; email tests need local or qa.`,
+      );
+    }
+    this.baseURL = testEnv.mailCatcherURL;
+  }
 
   /** The newest email to exactly this address with this subject, or undefined. */
   async findEmail(recipient: string, subject: string): Promise<CaughtEmail | undefined> {

@@ -9,7 +9,7 @@ test.describe('Category filter', () => {
 
   test(
     'shows only products from the selected category',
-    { tag: ['@smoke', '@regression'] },
+    { tag: ['@smoke', '@readonly', '@regression'] },
     async ({ homePage }) => {
       await homePage.toggleCategory(categoryData.firstCategory);
 
@@ -20,7 +20,7 @@ test.describe('Category filter', () => {
 
   test(
     'UI shows exactly the products the API returned',
-    { tag: '@regression' },
+    { tag: ['@readonly', '@regression'] },
     async ({ homePage }) => {
       const response = await homePage.toggleCategory(categoryData.secondCategory);
       const body = await response.json();
@@ -33,7 +33,7 @@ test.describe('Category filter', () => {
 
   test(
     'selecting two categories combines their products',
-    { tag: '@regression' },
+    { tag: ['@readonly', '@regression'] },
     async ({ homePage }) => {
       await homePage.toggleCategory(categoryData.firstCategory);
       await expect(homePage.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
@@ -48,7 +48,7 @@ test.describe('Category filter', () => {
 
   test(
     'unchecking the category restores the full list',
-    { tag: '@regression' },
+    { tag: ['@readonly', '@regression'] },
     async ({ homePage }) => {
       const initialNames = await homePage.productNames.allTextContents();
 

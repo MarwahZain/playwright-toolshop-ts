@@ -8,7 +8,7 @@ import { delayProductList, mockProductListError } from '../../src/mocks/products
 test.describe('Product list when the backend misbehaves (mocked)', () => {
   test(
     'a 500 server error shows a message instead of an empty page',
-    { tag: ['@mocked', '@regression'] },
+    { tag: ['@mocked', '@readonly', '@regression'] },
     async ({ page, homePage }) => {
       test.fail(
         true,
@@ -39,7 +39,7 @@ test.describe('Product list when the backend misbehaves (mocked)', () => {
 
   test(
     'a slow response shows products once they arrive',
-    { tag: ['@mocked', '@regression'] },
+    { tag: ['@mocked', '@readonly', '@regression'] },
     async ({ page, homePage }) => {
       const mock = await delayProductList(page, 3000);
 

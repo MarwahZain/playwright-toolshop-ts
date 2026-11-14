@@ -1,6 +1,7 @@
 import os from 'node:os';
 import { Status } from 'allure-js-commons';
 import type { Category } from 'allure-js-commons/sdk';
+import type { TestEnvironment } from '../config/environments';
 
 /**
  * Failure categories for the Allure report. Allure checks them in order and
@@ -50,10 +51,12 @@ export const allureCategories: Category[] = [
 ];
 
 /** Shown in the Environment widget of the Allure report. */
-export function allureEnvironment(baseURL: string): Record<string, string> {
+export function allureEnvironment(env: TestEnvironment): Record<string, string> {
   return {
-    'Base URL': baseURL,
-    'API URL': process.env.API_URL ?? 'not set',
+    Environment: `${env.name} (${env.description})`,
+    'Base URL': env.baseURL,
+    'API URL': env.apiURL,
+    'Shared data': env.sharedData ? 'yes, @readonly tests only' : 'no',
     Node: process.version,
     OS: `${os.platform()} ${os.release()}`,
     CI: process.env.CI ? 'yes' : 'no',

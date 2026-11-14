@@ -28,9 +28,10 @@ env:
   # Pinned Toolshop commit, the same one the local setup uses. Update it on purpose.
   TOOLSHOP_REF: ae7caecb811dd8952c09d997e69be7cb946ecd44
   SPRINT: ${{ inputs.sprint || 'sprint5' }}
-  BASE_URL: http://localhost:4200
-  API_URL: http://localhost:8091
-  MAILCATCHER_URL: http://localhost:1080
+  # The tests take their URLs from TEST_ENV; the two below are only for the shell checks.
+  TEST_ENV: qa
+  TOOLSHOP_UI: http://localhost:4200
+  TOOLSHOP_API: http://localhost:8091
 
 jobs:
   test:
@@ -84,7 +85,7 @@ jobs:
       - name: Check the API
         working-directory: toolshop
         run: |
-          if curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$API_URL/products" -o /dev/null; then
+          if curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$TOOLSHOP_API/products" -o /dev/null; then
             echo "API ready"; exit 0
           fi
           docker compose ps -a; docker compose logs web laravel-api
@@ -104,7 +105,7 @@ jobs:
         working-directory: toolshop
         run: |
           for i in $(seq 1 120); do
-            if [ "$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL")" = "200" ]; then
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' "$TOOLSHOP_UI")" = "200" ]; then
               echo "UI ready"; exit 0
             fi
             sleep 5

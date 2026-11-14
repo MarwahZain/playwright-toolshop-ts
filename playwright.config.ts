@@ -2,11 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 import { storageStatePath } from './src/global-setup';
 import { allureCategories, allureEnvironment } from './src/reporting/allure';
-
-const baseURL = process.env.BASE_URL;
-if (!baseURL) {
-  throw new Error('BASE_URL is missing. Copy .env.example to .env and fill it in.');
-}
+import { testEnv } from './src/config/environments';
 
 // Role-specific specs live in tests/<role>/ and run in the matching project,
 // pre-authenticated from the storage state written by global setup.
@@ -19,6 +15,10 @@ export default defineConfig({
   globalSetup: './src/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
+  // Shared environments (sit, uat) only run tests that cannot change their data.
+  // A --grep on the command line replaces this, so every @smoke test is also @readonly
+  // (checked by npm run check:tags).
+  grep: testEnv.sharedData ? /@readonly/ : undefined,
   // One retry in CI absorbs a real hiccup; a test that passes on retry is reported as flaky.
   // Locally a failure fails at once.
   retries: process.env.CI ? 1 : 0,
@@ -34,14 +34,14 @@ export default defineConfig({
       {
         resultsDir: 'allure-results',
         categories: allureCategories,
-        environmentInfo: allureEnvironment(baseURL),
+        environmentInfo: allureEnvironment(testEnv),
       },
     ],
     ...(process.env.CI ? [['github'] as const] : []),
   ],
 
   use: {
-    baseURL,
+    baseURL: testEnv.baseURL,
     testIdAttribute: 'data-test',
     // Record every test, keep the evidence only when it fails.
     trace: 'retain-on-failure',

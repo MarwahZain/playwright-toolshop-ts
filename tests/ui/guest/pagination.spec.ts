@@ -13,7 +13,7 @@ test.describe('Pagination', () => {
 
   test(
     'page 2 shows a different set of products than page 1',
-    { tag: ['@smoke', '@regression'] },
+    { tag: ['@smoke', '@readonly', '@regression'] },
     async ({ homePage }) => {
       const page1Names = await homePage.getNames();
 
@@ -28,16 +28,20 @@ test.describe('Pagination', () => {
     },
   );
 
-  test('highlights the current page', { tag: '@regression' }, async ({ homePage }) => {
-    await expect(homePage.activePage).toHaveText('1');
+  test(
+    'highlights the current page',
+    { tag: ['@readonly', '@regression'] },
+    async ({ homePage }) => {
+      await expect(homePage.activePage).toHaveText('1');
 
-    await homePage.goToPage('2');
-    await expect(homePage.activePage).toHaveText('2');
-  });
+      await homePage.goToPage('2');
+      await expect(homePage.activePage).toHaveText('2');
+    },
+  );
 
   test(
     'next and previous move one page at a time',
-    { tag: '@regression' },
+    { tag: ['@readonly', '@regression'] },
     async ({ homePage }) => {
       await homePage.goToNextPage();
       await expect(homePage.activePage).toHaveText('2');
@@ -47,12 +51,16 @@ test.describe('Pagination', () => {
     },
   );
 
-  test('last page shows the remaining products', { tag: '@regression' }, async ({ homePage }) => {
-    expect(meta.last_page).toBeGreaterThan(1);
+  test(
+    'last page shows the remaining products',
+    { tag: ['@readonly', '@regression'] },
+    async ({ homePage }) => {
+      expect(meta.last_page).toBeGreaterThan(1);
 
-    await homePage.goToPage(String(meta.last_page));
+      await homePage.goToPage(String(meta.last_page));
 
-    const expectedOnLastPage = meta.total - meta.per_page * (meta.last_page - 1);
-    await expect(homePage.productNames).toHaveCount(expectedOnLastPage);
-  });
+      const expectedOnLastPage = meta.total - meta.per_page * (meta.last_page - 1);
+      await expect(homePage.productNames).toHaveCount(expectedOnLastPage);
+    },
+  );
 });

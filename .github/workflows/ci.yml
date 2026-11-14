@@ -18,11 +18,10 @@ concurrency:
 permissions:
   contents: read
 
-# CI has no .env file and no local Toolshop, so it targets the public site.
-# Its demo accounts are public; global setup falls back to them.
+# CI has no local Toolshop, so the smoke set runs on the public uat environment
+# (URLs in src/config/environments.ts). Its own account per environment comes in B3.
 env:
-  BASE_URL: https://practicesoftwaretesting.com
-  API_URL: https://api.practicesoftwaretesting.com
+  TEST_ENV: uat
 
 jobs:
   quality:

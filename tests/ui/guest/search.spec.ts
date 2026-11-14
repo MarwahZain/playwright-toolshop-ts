@@ -8,7 +8,7 @@ test.describe('Product search', () => {
 
   test(
     'returns only products matching the search term',
-    { tag: ['@smoke', '@regression'] },
+    { tag: ['@smoke', '@readonly', '@regression'] },
     async ({ homePage }) => {
       await homePage.searchFor(searchData.matchingTerm);
 
@@ -18,17 +18,25 @@ test.describe('Product search', () => {
     },
   );
 
-  test('search is case-insensitive', { tag: '@regression' }, async ({ homePage }) => {
-    await homePage.searchFor(searchData.caseInsensitiveTerm);
+  test(
+    'search is case-insensitive',
+    { tag: ['@readonly', '@regression'] },
+    async ({ homePage }) => {
+      await homePage.searchFor(searchData.caseInsensitiveTerm);
 
-    await expect(homePage.productNames).not.toHaveCount(0);
-    await expect(homePage.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
-  });
+      await expect(homePage.productNames).not.toHaveCount(0);
+      await expect(homePage.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+    },
+  );
 
-  test('shows a message when nothing matches', { tag: '@regression' }, async ({ homePage }) => {
-    await homePage.searchFor(searchData.noMatchTerm);
+  test(
+    'shows a message when nothing matches',
+    { tag: ['@readonly', '@regression'] },
+    async ({ homePage }) => {
+      await homePage.searchFor(searchData.noMatchTerm);
 
-    await expect(homePage.productNames).toHaveCount(0);
-    await expect(homePage.noResults).toBeVisible();
-  });
+      await expect(homePage.productNames).toHaveCount(0);
+      await expect(homePage.noResults).toBeVisible();
+    },
+  );
 });
