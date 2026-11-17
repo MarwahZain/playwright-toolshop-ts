@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import './load-env';
 
 /**
  * Test environments, selected with TEST_ENV (default: local).

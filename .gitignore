@@ -1,5 +1,8 @@
 node_modules/
+# Local settings and secrets: every .env file except the committed template
 .env
+.env.*
+!.env.example
 test-results/
 .auth/
 playwright-report/

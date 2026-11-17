@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import './load-env';
 import loginData from '../../test-data/login.json';
 
 /**

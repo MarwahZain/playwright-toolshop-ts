@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import 'dotenv/config';
+import './src/config/load-env';
 import { storageStatePath } from './src/global-setup';
 import { allureCategories, allureEnvironment } from './src/reporting/allure';
 import { testEnv } from './src/config/environments';
