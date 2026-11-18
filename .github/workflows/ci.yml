@@ -58,6 +58,22 @@ jobs:
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
     steps:
+      # Shows which account settings reached the job, never their values: whether each is
+      # set, its length, stray whitespace, and whether an email has the expected domain.
+      - name: Check account settings (values hidden)
+        run: |
+          for name in CUSTOMER_EMAIL CUSTOMER_PASSWORD ADMIN_EMAIL ADMIN_PASSWORD; do
+            value="${!name}"
+            if [ -z "$value" ]; then echo "$name: not set, falls back to test-data/login.json"; continue; fi
+            line="$name: set, ${#value} characters"
+            [[ "$value" =~ ^[[:space:]] || "$value" =~ [[:space:]]$ ]] && line="$line, WARNING: leading or trailing whitespace"
+            if [[ "$name" == *_EMAIL ]]; then
+              [[ "$value" == *@practicesoftwaretesting.com ]] && line="$line, domain ok" || line="$line, WARNING: unexpected domain"
+            fi
+            echo "$line"
+          done
+          echo "CUSTOMER_NAME: ${CUSTOMER_NAME:-not set}"
+
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
