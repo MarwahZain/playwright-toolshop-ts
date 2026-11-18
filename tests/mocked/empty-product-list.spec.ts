@@ -8,7 +8,7 @@ import { mockProductList } from '../../src/mocks/products';
 test.describe('Empty product list (mocked)', () => {
   test(
     'shows a message instead of an empty grid',
-    { tag: ['@mocked', '@regression'] },
+    { tag: ['@mocked', '@readonly', '@regression'] },
     async ({ page, homePage }) => {
       const mock = await mockProductList(page, []);
 

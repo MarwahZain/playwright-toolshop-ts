@@ -1,4 +1,5 @@
 import { test, expect } from '../../../src/fixtures/pages';
+import { customer } from '../../../src/config/accounts';
 import loginData from '../../../test-data/login.json';
 
 const emptyFieldCases = loginData.emptyFieldCases as {
@@ -17,16 +18,17 @@ test.describe('Login', () => {
   test(
     'customer can log in with valid credentials',
     // No @smoke: the public demo site serves a Cloudflare bot challenge to CI runners.
-    { tag: '@regression' },
+    { tag: ['@readonly', '@regression'] },
     async ({ loginPage, accountPage }) => {
-      await loginPage.login(loginData.validCustomer.email, loginData.validCustomer.password);
+      await loginPage.login(customer.email, customer.password);
 
       await accountPage.expectUrl(/\/account$/);
       await expect(accountPage.pageTitle).toHaveText('My account');
-      await expect(accountPage.header.navMenu).toContainText(loginData.customerName);
+      await expect(accountPage.header.navMenu).toContainText(customer.name);
     },
   );
 
+  // Not @readonly: every wrong password counts towards locking the account on a shared environment.
   test('shows an error for an invalid password', { tag: '@regression' }, async ({ loginPage }) => {
     await loginPage.login(loginData.invalidCustomer.email, loginData.invalidCustomer.password);
 
@@ -35,15 +37,19 @@ test.describe('Login', () => {
   });
 
   for (const { name, email, password, error, message } of emptyFieldCases) {
-    test(`shows a validation error when ${name}`, { tag: '@regression' }, async ({ loginPage }) => {
-      await loginPage.login(email, password);
-      await expect(loginPage[error]).toHaveText(message);
-    });
+    test(
+      `shows a validation error when ${name}`,
+      { tag: ['@readonly', '@regression'] },
+      async ({ loginPage }) => {
+        await loginPage.login(email, password);
+        await expect(loginPage[error]).toHaveText(message);
+      },
+    );
   }
 
   test(
     'shows both errors when all fields are empty',
-    { tag: '@regression' },
+    { tag: ['@readonly', '@regression'] },
     async ({ loginPage }) => {
       await loginPage.submit();
 

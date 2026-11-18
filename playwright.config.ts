@@ -1,11 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
-import 'dotenv/config';
+import './src/config/load-env';
 import { storageStatePath } from './src/global-setup';
-
-const baseURL = process.env.BASE_URL;
-if (!baseURL) {
-  throw new Error('BASE_URL is missing. Copy .env.example to .env and fill it in.');
-}
+import { allureCategories, allureEnvironment } from './src/reporting/allure';
+import { testEnv } from './src/config/environments';
 
 // Role-specific specs live in tests/<role>/ and run in the matching project,
 // pre-authenticated from the storage state written by global setup.
@@ -18,14 +15,37 @@ export default defineConfig({
   globalSetup: './src/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: [['html', { open: 'never' }]],
+  // Shared environments (sit, uat) only run tests that cannot change their data.
+  // A --grep on the command line replaces this, so every @smoke test is also @readonly
+  // (checked by npm run check:tags).
+  grep: testEnv.sharedData ? /@readonly/ : undefined,
+  // One retry in CI absorbs a real hiccup; a test that passes on retry is reported as flaky.
+  // Locally a failure fails at once.
+  retries: process.env.CI ? 1 : 0,
+  // Locally: half the CPU cores. CI: 2, leaving room for the Toolshop containers on the same runner.
+  workers: process.env.CI ? 2 : undefined,
+  // list: console progress; html: debug one run; allure: trends and failure categories
+  // (npm run report:allure); github: failure annotations on pull requests.
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+    [
+      'allure-playwright',
+      {
+        resultsDir: 'allure-results',
+        categories: allureCategories,
+        environmentInfo: allureEnvironment(testEnv),
+      },
+    ],
+    ...(process.env.CI ? [['github'] as const] : []),
+  ],
 
   use: {
-    baseURL,
+    baseURL: testEnv.baseURL,
     testIdAttribute: 'data-test',
-    trace: 'on-first-retry',
+    // Record every test, keep the evidence only when it fails.
+    trace: 'retain-on-failure',
+    video: 'retain-on-failure',
     screenshot: 'only-on-failure',
     //headless: !!process.env.CI,   // headed locally, headless in CI
   },

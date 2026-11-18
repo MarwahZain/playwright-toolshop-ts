@@ -2,7 +2,7 @@
 
 Eleven milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M2 complete, M3 and M4 nearly complete.
+Progress: M0 to M5 complete (open: M3 runtime measurement, M4 search for a new product). M6 in progress.
 
 ## M0: Bootstrap
 
@@ -45,7 +45,7 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 - [x] Save storageState for admin and customer
 - [x] Separate Playwright projects per role
 - [ ] Measure suite runtime before and after, note it in the README
-- [ ] Tag release v0.1
+- [x] Tag release v0.1
 
 **Outcome:** role-based UI tests skip the login screen and the suite runs faster.
 
@@ -62,28 +62,50 @@ Progress: M0 to M2 complete, M3 and M4 nearly complete.
 
 ## M5: Advanced scenarios
 
-- [ ] Mock an empty product list with `page.route`
-- [ ] Mock a 500 error and a slow response
-- [ ] Full checkout across payment methods
-- [ ] Contact form with file upload
-- [ ] Forgot password: read the email through the MailCatcher API and assert its content
-- [ ] Tags `@smoke` and `@regression` on every test
-- [ ] Visual snapshot for one or two stable pages
-- [ ] Give tests that change account data their own user, registered through the API
+- [x] Mock an empty product list with `page.route`
+- [x] Mock a 500 error and a slow response
+- [x] Full checkout across payment methods
+- [x] Contact form with file upload
+- [x] Forgot password: read the email through the MailCatcher API and assert its content
+- [x] Tags `@smoke` and `@regression` on every test
+- [x] Visual snapshot for one or two stable pages
+- [x] Give tests that change account data their own user, registered through the API
 
 **Outcome:** the MailCatcher test and isolated test users set the repo apart from most Toolshop projects.
 
-## M6: Reporting and CI
+## M6: Reporting, CI and environments
 
-- [ ] HTML and Allure reporters
-- [x] Smoke tests on every push against the public site
-- [ ] Full regression on a manual trigger
-- [x] Upload the report as a workflow artifact
-- [ ] Publish the Allure report to GitHub Pages
-- [ ] Parallel workers and sharding, retries only in CI
-- [ ] CI badge in the README, tag release v1.0
+Goal: learn the GitHub Actions features worth knowing, and run the same suite against several environments (SIT, QA, UAT) the way everyday projects do.
 
-**Outcome:** a green CI badge and a published report.
+| Environment | URL                                                       | Data          | Tests                        |
+| ----------- | --------------------------------------------------------- | ------------- | ---------------------------- |
+| `local`     | localhost:4200 / 8091 (Docker on the Mac)                 | own           | all                          |
+| `qa`        | Toolshop in Docker on the runner, pinned commit           | fresh per run | all                          |
+| `sit`       | with-bugs.practicesoftwaretesting.com (sprint5 with bugs) | shared        | `@readonly`                  |
+| `uat`       | practicesoftwaretesting.com (sprint5, stable)             | shared        | `@readonly`, manual approval |
+
+Part A: configuration
+
+- [x] HTML and Allure reporters, Allure failure categories and environment info
+- [x] Trace and video kept on every failure
+- [x] Parallel workers and retries only in CI (2 workers, 1 retry)
+
+Part B: GitHub Actions and environments
+
+- [x] B1: CI gate on every push and PR: lint, format, type and tag checks, then smoke; reports as artifacts
+- [ ] B2: `TEST_ENV` switch in code (environment map, like Spring profiles), customer name from one place, `@readonly` tags
+- [ ] B3: GitHub Environments `sit`, `qa`, `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; a run-on-environment workflow (environment and suite dropdowns); smoke on `uat` with its own account
+- [ ] B4: `qa` in Docker on the runner as a composite action, 3 shards with one merged HTML report
+- [ ] B5: Allure with history per environment on GitHub Pages, nightly matrix over the environments, job summaries
+- [ ] B6: visual tests in CI (`qa` only), Dependabot, badges in the README, tag release v1.0
+
+Part C: Jenkins
+
+- [ ] `Jenkinsfile`: lint, smoke, sharded regression, reports (JUnit trends, HTML, Allure); environment as a choice parameter feeding `TEST_ENV`
+- [ ] Jenkins in Docker on the Mac, connected to Toolshop's Docker network
+- [ ] `docs/JENKINS.md` and screenshots of a green run in the README
+
+**Outcome:** one suite that switches environments with one variable, green CI gates, published reports per environment, and the same pipeline in GitHub Actions and Jenkins.
 
 ## M7: Lighthouse audits
 

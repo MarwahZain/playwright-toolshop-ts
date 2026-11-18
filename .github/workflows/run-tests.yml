@@ -1,0 +1,85 @@
+# Reusable workflow: runs the suite against one environment. Called by other workflows
+# (Test on environment now, the nightly run later), never started on its own.
+#
+# The job declares the GitHub Environment named by the input, so:
+#   - it receives that environment's secrets and variables (overriding repository ones),
+#   - environments with protection rules (uat) wait for approval before it starts.
+name: Run tests
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment to test (sit or uat; qa follows with the Docker setup)
+        type: string
+        required: true
+      suite:
+        description: smoke (the @smoke set, Chromium) or full (every test allowed there)
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ inputs.environment }} ${{ inputs.suite }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    env:
+      TEST_ENV: ${{ inputs.environment }}
+      CUSTOMER_EMAIL: ${{ secrets.CUSTOMER_EMAIL }}
+      CUSTOMER_PASSWORD: ${{ secrets.CUSTOMER_PASSWORD }}
+      CUSTOMER_NAME: ${{ vars.CUSTOMER_NAME }}
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+    steps:
+      - name: Check the inputs
+        run: |
+          case "${{ inputs.environment }}" in sit|uat) ;; *)
+            echo "::error::Environment '${{ inputs.environment }}' is not supported here yet (sit, uat)."; exit 1 ;;
+          esac
+          case "${{ inputs.suite }}" in smoke|full) ;; *)
+            echo "::error::Suite '${{ inputs.suite }}' is unknown (smoke, full)."; exit 1 ;;
+          esac
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # smoke runs in Chromium only; full also runs the guest tests in Firefox and WebKit.
+      - name: Install browsers
+        run: |
+          if [ "${{ inputs.suite }}" = "smoke" ]; then
+            npx playwright install --with-deps chromium
+          else
+            npx playwright install --with-deps chromium firefox webkit
+          fi
+
+      # On sit and uat the config runs only @readonly tests (src/config/environments.ts).
+      - name: Run ${{ inputs.suite }} on ${{ inputs.environment }}
+        run: |
+          if [ "${{ inputs.suite }}" = "smoke" ]; then
+            npm run test:smoke
+          else
+            npx playwright test
+          fi
+
+      - name: Upload HTML report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ inputs.environment }}-${{ inputs.suite }}
+          path: playwright-report/
+          retention-days: 14
+      - name: Upload Allure results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ inputs.environment }}-${{ inputs.suite }}
+          path: allure-results/
+          retention-days: 14

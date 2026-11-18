@@ -1,0 +1,139 @@
+# Full regression against Toolshop started in Docker on the runner, with a fresh database.
+# Work in progress (M6 B4): one job, no shards yet. Becomes the qa environment, with
+# shards, a composite action for the Docker setup and published reports.
+name: Regression
+
+on:
+  workflow_dispatch:
+    inputs:
+      sprint:
+        description: Toolshop version to test
+        type: choice
+        options: [sprint5, sprint5-with-bugs]
+        default: sprint5
+
+# One full run at a time; a new run waits instead of cancelling the one in progress.
+concurrency:
+  group: regression
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Pinned Toolshop commit, the same one the local setup uses. Update it on purpose.
+  TOOLSHOP_REF: ae7caecb811dd8952c09d997e69be7cb946ecd44
+  SPRINT: ${{ inputs.sprint || 'sprint5' }}
+  # The tests take their URLs from TEST_ENV; the two below are only for the shell checks.
+  TEST_ENV: qa
+  TOOLSHOP_UI: http://localhost:4200
+  TOOLSHOP_API: http://localhost:8091
+
+jobs:
+  test:
+    name: full suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out Toolshop
+        uses: actions/checkout@v4
+        with:
+          repository: testsmith-io/practice-software-testing
+          ref: ${{ env.TOOLSHOP_REF }}
+          path: toolshop
+
+      # docker-compose.override.yml is loaded automatically: it adds MailCatcher and the
+      # cron container that sends queued emails. phpMyAdmin is started too: the web
+      # server's config names it, and nginx refuses to start without it.
+      # The composer service is left out; the next step installs the packages instead.
+      - name: Start Toolshop
+        working-directory: toolshop
+        run: |
+          docker compose up -d laravel-api angular-ui web mariadb cron mailcatcher phpmyadmin
+          docker compose ps
+
+      # The API runs as www-data and must write to storage/ (logs, cache). The checkout
+      # belongs to the runner's user, so hand the code to www-data, as Toolshop's own
+      # composer service does. Docker Desktop on a Mac hides this; a Linux runner does not.
+      - name: Install API dependencies
+        working-directory: toolshop
+        run: |
+          docker compose exec -T -u root laravel-api composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-ffi
+          docker compose exec -T -u root laravel-api chown -R www-data:www-data /var/www
+
+      - name: Wait for the database
+        working-directory: toolshop
+        run: |
+          for i in $(seq 1 60); do
+            if docker compose exec -T mariadb mysqladmin ping -h localhost -u root -proot --silent; then
+              echo "Database ready"; exit 0
+            fi
+            sleep 2
+          done
+          echo "Database not ready after 2 minutes"; docker compose logs mariadb; exit 1
+
+      - name: Create and seed the database
+        working-directory: toolshop
+        run: docker compose exec -T laravel-api php artisan migrate:fresh --seed --force
+
+      - name: Check the API
+        working-directory: toolshop
+        run: |
+          if curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$TOOLSHOP_API/products" -o /dev/null; then
+            echo "API ready"; exit 0
+          fi
+          docker compose ps -a; docker compose logs web laravel-api
+          docker compose exec -T laravel-api tail -n 80 storage/logs/laravel.log || true
+          exit 1
+
+      # Runs while the UI container is still installing its own packages.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Wait for the UI
+        working-directory: toolshop
+        run: |
+          for i in $(seq 1 120); do
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' "$TOOLSHOP_UI")" = "200" ]; then
+              echo "UI ready"; exit 0
+            fi
+            sleep 5
+          done
+          echo "UI not ready after 10 minutes"; docker compose logs angular-ui; exit 1
+
+      - name: Run the full suite
+        run: npx playwright test
+
+      - name: Upload HTML report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+      - name: Upload Allure results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 14
+
+      - name: Collect Toolshop logs
+        if: ${{ failure() }}
+        working-directory: toolshop
+        run: docker compose logs --no-color > ../toolshop-logs.txt
+      - name: Upload Toolshop logs
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: toolshop-logs
+          path: toolshop-logs.txt
+          retention-days: 14

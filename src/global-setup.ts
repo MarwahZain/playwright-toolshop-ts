@@ -2,7 +2,8 @@ import { request } from '@playwright/test';
 import { AuthApi } from './api/AuthApi';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import loginData from '../test-data/login.json';
+import { testEnv } from './config/environments';
+import { admin, customer } from './config/accounts';
 
 export const AUTH_DIR = '.auth';
 
@@ -49,23 +50,7 @@ async function saveStorageState(
 }
 
 export default async function globalSetup(): Promise<void> {
-  const baseURL = process.env.BASE_URL;
-  const apiURL = process.env.API_URL;
-  // Credentials come from the environment first, then fall back to test-data/login.json.
-  const customerEmail = process.env.CUSTOMER_EMAIL || loginData.validCustomer.email;
-  const customerPassword = process.env.CUSTOMER_PASSWORD || loginData.validCustomer.password;
-  const adminEmail = process.env.ADMIN_EMAIL || loginData.validAdmin.email;
-  const adminPassword = process.env.ADMIN_PASSWORD || loginData.validAdmin.password;
-
-  if (!baseURL || !apiURL) {
-    throw new Error('global-setup: BASE_URL and API_URL must be set in .env.');
-  }
-  if (!customerEmail || !customerPassword || !adminEmail || !adminPassword) {
-    throw new Error(
-      'global-setup: customer and admin credentials must be set in .env or test-data/login.json.',
-    );
-  }
-
-  await saveStorageState(baseURL, 'customer', customerEmail, customerPassword);
-  await saveStorageState(baseURL, 'admin', adminEmail, adminPassword);
+  // URLs come from TEST_ENV, accounts from environment variables or login.json.
+  await saveStorageState(testEnv.baseURL, 'customer', customer.email, customer.password);
+  await saveStorageState(testEnv.baseURL, 'admin', admin.email, admin.password);
 }

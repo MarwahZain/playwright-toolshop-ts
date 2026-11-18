@@ -8,7 +8,7 @@ import loginData from '../../../test-data/login.json';
 test.describe('Admin dashboard', () => {
   test(
     'opens the dashboard directly, without logging in',
-    { tag: ['@smoke', '@regression'] },
+    { tag: ['@smoke', '@readonly', '@regression'] },
     async ({ adminDashboardPage }) => {
       await adminDashboardPage.open();
 

@@ -6,7 +6,7 @@ import { CategoriesApi } from '../api/CategoriesApi';
 import { CartsApi } from '../api/CartsApi';
 import { InvoicesApi } from '../api/InvoicesApi';
 import { MessagesApi } from '../api/MessagesApi';
-import loginData from '../../test-data/login.json';
+import { admin, customer } from '../config/accounts';
 
 type ApiFixtures = {
   authApi: AuthApi;
@@ -37,9 +37,7 @@ export const test = base.extend<ApiFixtures, WorkerFixtures>({
   adminToken: [
     async ({ playwright }, use) => {
       const context = await playwright.request.newContext();
-      const email = process.env.ADMIN_EMAIL || loginData.validAdmin.email;
-      const password = process.env.ADMIN_PASSWORD || loginData.validAdmin.password;
-      const token = await new AuthApi(context).getToken(email, password);
+      const token = await new AuthApi(context).getToken(admin.email, admin.password);
       await context.dispose();
       await use(token);
     },
@@ -49,9 +47,7 @@ export const test = base.extend<ApiFixtures, WorkerFixtures>({
   customerToken: [
     async ({ playwright }, use) => {
       const context = await playwright.request.newContext();
-      const email = process.env.CUSTOMER_EMAIL || loginData.validCustomer.email;
-      const password = process.env.CUSTOMER_PASSWORD || loginData.validCustomer.password;
-      const token = await new AuthApi(context).getToken(email, password);
+      const token = await new AuthApi(context).getToken(customer.email, customer.password);
       await context.dispose();
       await use(token);
     },
