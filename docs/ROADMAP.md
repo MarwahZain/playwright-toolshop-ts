@@ -93,8 +93,8 @@ Part A: configuration
 Part B: GitHub Actions and environments
 
 - [x] B1: CI gate on every push and PR: lint, format, type and tag checks, then smoke; reports as artifacts
-- [ ] B2: `TEST_ENV` switch in code (environment map, like Spring profiles), customer name from one place, `@readonly` tags
-- [ ] B3: GitHub Environments `sit`, `qa`, `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; a run-on-environment workflow (environment and suite dropdowns); smoke on `uat` with its own account
+- [x] B2: `TEST_ENV` switch in code (environment map, like Spring profiles), customer name from one place, `@readonly` tags
+- [x] B3: GitHub Environments `sit`, `qa`, `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; a run-on-environment workflow (environment and suite dropdowns); smoke on `uat` with its own account
 - [ ] B4: `qa` in Docker on the runner as a composite action, 3 shards with one merged HTML report
 - [ ] B5: Allure with history per environment on GitHub Pages, nightly matrix over the environments, job summaries
 - [ ] B6: visual tests in CI (`qa` only), Dependabot, badges in the README, tag release v1.0
