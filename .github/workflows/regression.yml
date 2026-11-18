@@ -1,13 +1,9 @@
 # Full regression against Toolshop started in Docker on the runner, with a fresh database.
-# Increment 5a: one job, no shards. Shards, Allure on Pages, the visual job and the
-# public target follow in later increments.
+# Work in progress (M6 B4): one job, no shards yet. Becomes the qa environment, with
+# shards, a composite action for the Docker setup and published reports.
 name: Regression
 
 on:
-  # TEMPORARY: GitHub shows the Run workflow button only once a workflow is on main.
-  # Until this branch is merged, each push to it runs the workflow. Remove before merging.
-  push:
-    branches: [ci/m6-reporting]
   workflow_dispatch:
     inputs:
       sprint:

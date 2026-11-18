@@ -156,9 +156,20 @@ npm run check:tags    # every test has @regression, every @smoke test is @readon
 
 ## CI
 
-`.github/workflows/ci.yml` runs on every push to `main`, every pull request and on demand:
+| Workflow                  | When                                                  | What                                                                                  |
+| ------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `ci.yml`                  | every push to `main`, every pull request, on demand   | **quality** (lint, format, type and tag checks), then **smoke** on `uat`              |
+| `test-on-environment.yml` | on demand: Actions, Test on environment, Run workflow | the `smoke` or `full` suite on `sit` or `uat`                                         |
+| `run-tests.yml`           | called by other workflows                             | the shared steps: one environment, one suite                                          |
+| `regression.yml`          | on demand, work in progress                           | the full suite against Toolshop in Docker on the runner (the future `qa` environment) |
 
-1. **quality**: lint, format check, type check and tag check, without a browser.
-2. **smoke**: only if quality passes. The `@smoke` set (guest UI in Chromium, plus the customer and admin sessions) against the public demo site. The HTML report and the Allure results are kept as workflow artifacts for 14 days.
+**Environments and secrets.** The repository has GitHub Environments `sit` and `uat`. Each holds its own accounts as secrets (`CUSTOMER_EMAIL`, `CUSTOMER_PASSWORD`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`) and the customer's name as a variable (`CUSTOMER_NAME`). A job that declares `environment: uat` receives UAT's values; `uat` also requires an approval and accepts only `main`. Repository-level secrets with the same names are the defaults, used by the PR smoke job, which declares no environment so it never waits for approval. If a demo account gets locked by other visitors (HTTP 423), replace that secret and rerun; no code changes.
 
-`.github/workflows/regression.yml` runs the full suite on demand (Actions, Regression, Run workflow). It starts Toolshop in Docker on the runner at a pinned commit, seeds a fresh database and runs every project against `localhost`. Choose `sprint5` or `sprint5-with-bugs` when starting it. Reports are kept as artifacts; on failure the Toolshop container logs are attached too.
+From a terminal:
+
+```bash
+gh workflow run test-on-environment.yml -f environment=uat -f suite=smoke
+gh run watch
+```
+
+Every run keeps its HTML report and Allure results as artifacts for 14 days, named by environment and suite.

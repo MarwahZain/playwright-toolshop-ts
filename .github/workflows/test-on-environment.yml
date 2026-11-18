@@ -1,0 +1,34 @@
+# Manual run against a chosen environment: Actions > Test on environment > Run workflow.
+# From a terminal: gh workflow run test-on-environment.yml -f environment=uat -f suite=smoke
+name: Test on environment
+run-name: Tests on ${{ inputs.environment }} (${{ inputs.suite }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        type: choice
+        options: [uat, sit]
+        default: uat
+      suite:
+        description: Suite
+        type: choice
+        options: [smoke, full]
+        default: smoke
+
+# One run per environment at a time; a second one waits.
+concurrency:
+  group: tests-${{ inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    uses: ./.github/workflows/run-tests.yml
+    with:
+      environment: ${{ inputs.environment }}
+      suite: ${{ inputs.suite }}
+    secrets: inherit

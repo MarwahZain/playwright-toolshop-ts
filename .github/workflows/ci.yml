@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 # CI has no local Toolshop, so the smoke set runs on the public uat environment
-# (URLs in src/config/environments.ts). Its own account per environment comes in B3.
+# (URLs in src/config/environments.ts).
 env:
   TEST_ENV: uat
 
@@ -44,11 +44,19 @@ jobs:
       - name: Every test tagged @regression
         run: npm run check:tags
 
+  # No `environment:` here on purpose: the uat environment requires approval, and a PR
+  # check must not wait for a click. The account comes from repository secrets instead.
   smoke:
     name: smoke
     needs: quality
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CUSTOMER_EMAIL: ${{ secrets.CUSTOMER_EMAIL }}
+      CUSTOMER_PASSWORD: ${{ secrets.CUSTOMER_PASSWORD }}
+      CUSTOMER_NAME: ${{ vars.CUSTOMER_NAME }}
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
