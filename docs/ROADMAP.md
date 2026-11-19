@@ -1,6 +1,6 @@
 # Roadmap
 
-Eleven milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
+Twelve milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
 Progress: M0 to M5 complete (open: M3 runtime measurement, M4 search for a new product). M6 in progress.
 
@@ -94,18 +94,12 @@ Part B: GitHub Actions and environments
 
 - [x] B1: CI gate on every push and PR: lint, format, type and tag checks, then smoke; reports as artifacts
 - [x] B2: `TEST_ENV` switch in code (environment map, like Spring profiles), customer name from one place, `@readonly` tags
-- [x] B3: GitHub Environments `sit`, `qa`, `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; a run-on-environment workflow (environment and suite dropdowns); smoke on `uat` with its own account
-- [ ] B4: `qa` in Docker on the runner as a composite action, 3 shards with one merged HTML report
-- [ ] B5: Allure with history per environment on GitHub Pages, nightly matrix over the environments, job summaries
-- [ ] B6: visual tests in CI (`qa` only), Dependabot, badges in the README, tag release v1.0
+- [x] B3: GitHub Environments `sit` and `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; Test on environment workflow; smoke with its own account; account-settings diagnostic
+- [ ] Wrap-up: current action versions (v7), Dependabot, README badges, tag release v1.0
 
-Part C: Jenkins
+The `qa` environment in Docker, shards, published reports, the visual job in CI and Jenkins continue in M8.
 
-- [ ] `Jenkinsfile`: lint, smoke, sharded regression, reports (JUnit trends, HTML, Allure); environment as a choice parameter feeding `TEST_ENV`
-- [ ] Jenkins in Docker on the Mac, connected to Toolshop's Docker network
-- [ ] `docs/JENKINS.md` and screenshots of a green run in the README
-
-**Outcome:** one suite that switches environments with one variable, green CI gates, published reports per environment, and the same pipeline in GitHub Actions and Jenkins.
+**Outcome:** one suite that switches environments with one variable, green CI gates, and UAT runs behind an approval.
 
 ## M7: Lighthouse audits
 
@@ -120,7 +114,21 @@ Part C: Jenkins
 
 **Outcome:** performance, accessibility, best practice and SEO scores for the key pages, checked against thresholds on every regression run.
 
-## M8: Showcase
+## M8: Advanced CI/CD
+
+Goal: the techniques expected of a technical lead, built on the M6 setup.
+
+- [ ] `qa` environment: Toolshop in Docker on the runner as a composite action (`.github/actions/start-toolshop`), green full run (`regression.yml` is the starting point)
+- [ ] 3 shards with one merged HTML report (blob reports, `merge-reports`)
+- [ ] Allure with history per environment on GitHub Pages (`/qa`, `/sit`, `/uat`), job summaries
+- [ ] Nightly schedule: a matrix over the environments, calling `run-tests.yml`
+- [ ] Visual tests in CI (`qa` only), in the Playwright Docker image
+- [ ] Self-healing shared accounts: unlock a locked customer through the admin API before login
+- [ ] Jenkins: `Jenkinsfile` with an environment choice parameter feeding `TEST_ENV`, Jenkins in Docker on the Mac, `docs/JENKINS.md`
+
+**Outcome:** reproducible full runs on a fresh environment, fast sharded feedback, published trends, and the same pipeline in GitHub Actions and Jenkins.
+
+## M9: Showcase
 
 - [ ] Run the suite against `sprint5-with-bugs` and log each real bug as a GitHub issue
 - [ ] Optional: one Gherkin feature with `playwright-bdd`
@@ -130,7 +138,7 @@ Part C: Jenkins
 
 **Outcome:** a repo that shows real testing work, not only automation.
 
-## M9: API mocking
+## M10: API mocking
 
 - [ ] Mock fixture in `src/fixtures` that wraps `page.route` for `/products`
 - [ ] Return a fixed product list with `route.fulfill` and assert the grid renders it exactly
@@ -144,7 +152,7 @@ Part C: Jenkins
 
 **Outcome:** any UI state can be tested, including errors the real backend rarely produces, without touching real data.
 
-## M10: BDD with Gherkin
+## M11: BDD with Gherkin
 
 - [ ] Install `playwright-bdd` and add a `bddgen` step before the test run
 - [ ] Feature file for login written from a user story, in `features/`
@@ -163,4 +171,4 @@ Part C: Jenkins
 - One branch per feature or milestone, with a prefix: `feat/`, `test/`, `refactor/`, `docs/`, `ci/`
 - Pull request to `main`, CI must pass before merging
 - Conventional commit messages
-- Release tags at the end of M3 (v0.1) and M6 (v1.0)
+- Release tags at the end of M4 (v0.1) and M6 (v1.0)

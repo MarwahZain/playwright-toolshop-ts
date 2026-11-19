@@ -60,8 +60,8 @@ jobs:
           done
           echo "CUSTOMER_NAME: ${CUSTOMER_NAME:-not set}"
 
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -87,14 +87,14 @@ jobs:
 
       - name: Upload HTML report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-${{ inputs.environment }}-${{ inputs.suite }}
           path: playwright-report/
           retention-days: 14
       - name: Upload Allure results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-${{ inputs.environment }}-${{ inputs.suite }}
           path: allure-results/
