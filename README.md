@@ -144,6 +144,7 @@ tests/ui/guest/       UI tests that run signed out
 tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
 docs/TOOLSHOP-LOCAL-SETUP.md  running Toolshop locally with Docker
+docs/CICD.md          CI/CD and environments: how it works, every command
 docs/ROADMAP.md       milestones and progress
 docs/LEARNINGS.md     notes and lessons from building the suite
 ```
@@ -175,6 +176,6 @@ gh workflow run test-on-environment.yml -f environment=uat -f suite=smoke
 gh run watch
 ```
 
-Every run keeps its HTML report and Allure results as artifacts for 14 days, named by environment and suite.
+Every run keeps its HTML report and Allure results as artifacts for 14 days, named by environment and suite. The full picture, with every command, is in [docs/CICD.md](docs/CICD.md).
 
 Dependabot (`.github/dependabot.yml`) opens weekly pull requests for GitHub Actions and npm updates. `@playwright/test` is upgraded by hand, together with the Playwright Docker image used for visual snapshots.
