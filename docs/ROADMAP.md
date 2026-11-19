@@ -2,7 +2,7 @@
 
 Twelve milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M5 complete (open: M3 runtime measurement, M4 search for a new product). M6 in progress.
+Progress: M0 to M6 complete (open: M3 runtime measurement, M4 search for a new product). Next: M7.
 
 ## M0: Bootstrap
 
@@ -95,7 +95,7 @@ Part B: GitHub Actions and environments
 - [x] B1: CI gate on every push and PR: lint, format, type and tag checks, then smoke; reports as artifacts
 - [x] B2: `TEST_ENV` switch in code (environment map, like Spring profiles), customer name from one place, `@readonly` tags
 - [x] B3: GitHub Environments `sit` and `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; Test on environment workflow; smoke with its own account; account-settings diagnostic
-- [ ] Wrap-up: current action versions (v7), Dependabot, README badges, tag release v1.0
+- [x] Wrap-up: current action versions (v7), Dependabot, README badges, tag release v1.0
 
 The `qa` environment in Docker, shards, published reports, the visual job in CI and Jenkins continue in M8.
 
