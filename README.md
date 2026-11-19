@@ -1,8 +1,11 @@
 # playwright-toolshop-ts
 
+[![CI](https://github.com/MarwahZain/playwright-toolshop-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/MarwahZain/playwright-toolshop-ts/actions/workflows/ci.yml)
+[![Test on environment](https://github.com/MarwahZain/playwright-toolshop-ts/actions/workflows/test-on-environment.yml/badge.svg)](https://github.com/MarwahZain/playwright-toolshop-ts/actions/workflows/test-on-environment.yml)
+
 Playwright + TypeScript test framework for [Toolshop](https://github.com/testsmith-io/practice-software-testing), a demo e-commerce app built for practicing test automation.
 
-The suite covers the UI with page objects, reusable components and custom fixtures, and starts role-based tests already signed in through an API login.
+The suite covers the UI with page objects, reusable components and custom fixtures, API and contract tests, hybrid, mocked and email flows, and visual snapshots. Role-based tests start signed in through an API login, and one variable (`TEST_ENV`) runs the same suite against local, SIT or UAT, locally and in GitHub Actions.
 
 ## Tech stack
 
@@ -141,6 +144,7 @@ tests/ui/guest/       UI tests that run signed out
 tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
 docs/TOOLSHOP-LOCAL-SETUP.md  running Toolshop locally with Docker
+docs/CICD.md          CI/CD and environments: how it works, every command
 docs/ROADMAP.md       milestones and progress
 docs/LEARNINGS.md     notes and lessons from building the suite
 ```
@@ -156,12 +160,12 @@ npm run check:tags    # every test has @regression, every @smoke test is @readon
 
 ## CI
 
-| Workflow                  | When                                                  | What                                                                                  |
-| ------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `ci.yml`                  | every push to `main`, every pull request, on demand   | **quality** (lint, format, type and tag checks), then **smoke** on `uat`              |
-| `test-on-environment.yml` | on demand: Actions, Test on environment, Run workflow | the `smoke` or `full` suite on `sit` or `uat`                                         |
-| `run-tests.yml`           | called by other workflows                             | the shared steps: one environment, one suite                                          |
-| `regression.yml`          | on demand, work in progress                           | the full suite against Toolshop in Docker on the runner (the future `qa` environment) |
+| Workflow                  | When                                                   | What                                                                                  |
+| ------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `ci.yml`                  | every push to `main`, every pull request, on demand    | **quality** (lint, format, type and tag checks), then **smoke** on `uat`              |
+| `test-on-environment.yml` | on demand: Actions, Test on environment, Run workflow  | the `smoke` or `full` suite on `sit` or `uat`                                         |
+| `run-tests.yml`           | called by other workflows                              | the shared steps: one environment, one suite                                          |
+| `regression.yml`          | on demand, work in progress (milestone Advanced CI/CD) | the full suite against Toolshop in Docker on the runner (the future `qa` environment) |
 
 **Environments and secrets.** The repository has GitHub Environments `sit` and `uat`. Each holds its own accounts as secrets (`CUSTOMER_EMAIL`, `CUSTOMER_PASSWORD`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`) and the customer's name as a variable (`CUSTOMER_NAME`). A job that declares `environment: uat` receives UAT's values; `uat` also requires an approval and accepts only `main`. Repository-level secrets with the same names are the defaults, used by the PR smoke job, which declares no environment so it never waits for approval. If a demo account gets locked by other visitors (HTTP 423), replace that secret and rerun; no code changes.
 
@@ -172,4 +176,6 @@ gh workflow run test-on-environment.yml -f environment=uat -f suite=smoke
 gh run watch
 ```
 
-Every run keeps its HTML report and Allure results as artifacts for 14 days, named by environment and suite.
+Every run keeps its HTML report and Allure results as artifacts for 14 days, named by environment and suite. The full picture, with every command, is in [docs/CICD.md](docs/CICD.md).
+
+Dependabot (`.github/dependabot.yml`) opens weekly pull requests for GitHub Actions and npm updates. `@playwright/test` is upgraded by hand, together with the Playwright Docker image used for visual snapshots.
