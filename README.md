@@ -66,6 +66,7 @@ npx playwright test --project=api          # API tests only
 npx playwright test --project=hybrid       # hybrid API + UI tests
 npx playwright test --project=email        # email flows (needs local Docker with MailCatcher)
 npm run test:smoke                         # smoke set: guest (Chromium), customer, admin
+npm run test:bdd                           # BDD scenarios (features/*.feature), see docs/BDD.md
 npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
@@ -145,6 +146,7 @@ tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
 docs/TOOLSHOP-LOCAL-SETUP.md  running Toolshop locally with Docker
 docs/CICD.md          CI/CD and environments: how it works, every command
+docs/BDD.md           BDD with Gherkin: how scenarios fit next to the plain specs
 docs/ROADMAP.md       milestones and progress
 docs/LEARNINGS.md     notes and lessons from building the suite
 ```

@@ -10,6 +10,8 @@ blob-report/
 playwright/.cache/
 allure-results/
 allure-report/
+# Generated from features/*.feature by npx bddgen
+.features-gen/
 .DS_Store
 # Temporary files from editor and file-sharing tools
 .fuse_hidden*

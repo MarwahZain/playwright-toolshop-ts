@@ -5,6 +5,9 @@
 // Usage: npm run check:tags
 import { execSync } from 'node:child_process';
 
+// Generate the BDD tests first, so scenarios are checked too.
+execSync('npx bddgen', { stdio: 'inherit', env: { ...process.env, TEST_ENV: 'local' } });
+
 const report = JSON.parse(
   execSync('npx playwright test --list --reporter=json', {
     encoding: 'utf8',
