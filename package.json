@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "bddgen && playwright test",
-    "test:smoke": "bddgen && playwright test --grep @smoke --project=chromium --project=customer --project=admin",
+    "test:smoke": "bddgen && playwright test --grep @smoke --project=chromium --project=customer --project=admin --project=bdd",
     "test:bdd": "bddgen && playwright test --project=bdd",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

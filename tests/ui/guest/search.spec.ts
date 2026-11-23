@@ -8,7 +8,7 @@ test.describe('Product search', () => {
 
   test(
     'returns only products matching the search term',
-    { tag: ['@smoke', '@readonly', '@regression'] },
+    { tag: ['@readonly', '@regression'] },
     async ({ homePage }) => {
       await homePage.searchFor(searchData.matchingTerm);
 

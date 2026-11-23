@@ -1,6 +1,6 @@
 # Roadmap
 
-Twelve milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
+Thirteen milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
 Progress: M0 to M6 complete, tagged v1.0 (open: M3 runtime measurement, M4 search for a new product). Next: M7.
 
@@ -103,13 +103,12 @@ The `qa` environment in Docker, shards, published reports, the visual job in CI 
 
 ## M7: BDD with Gherkin
 
-- [ ] Install `playwright-bdd` and add a `bddgen` step before the test run
-- [ ] Feature file for login written from a user story, in `features/`
-- [ ] Step definitions that reuse the existing fixtures (`loginPage`, `homePage`)
-- [ ] Scenario Outline with an Examples table for search terms
-- [ ] Background steps for shared setup
-- [ ] Tags on scenarios mapped to `@smoke` and `@regression`
-- [ ] Generate features with the test-analyst skill, review them with the QA architect skill
+- [x] Install `playwright-bdd` and add a `bddgen` step before the test run
+- [x] Feature file for login written from a user story, in `features/`
+- [x] Step definitions that reuse the existing fixtures (`loginPage`, `homePage`)
+- [x] Scenario Outline with an Examples table for search terms
+- [x] Background steps for shared setup
+- [x] Tags on scenarios: `@bdd`, `@regression`, `@readonly` (no `@smoke` while the old login and search specs stay)
 - [ ] Show feature and scenario names in the HTML report
 - [ ] README section: how BDD fits next to plain Playwright specs
 
@@ -164,7 +163,20 @@ Goal: the techniques expected of a technical lead, built on the M6 setup.
 - [ ] Tag mocked specs `@mocked` and keep them in `tests/mocked/`
 - [ ] LEARNINGS entry: when to mock and when to hit the real API
 
+- [ ] Network assertions: check the request a UI action sends (for example `/products/search?q=...`), its status and its response against the zod schema
+- [ ] UI and API agree: compare what the page shows (for example "6 products found") with the response it received (`total`)
+
 **Outcome:** any UI state can be tested, including errors the real backend rarely produces, without touching real data.
+
+## M12: AI-assisted testing
+
+Goal: use AI tools where they genuinely help a test team, and judge where they do not.
+
+- [ ] Draft Gherkin features from user stories with the test-analyst skill, then review and edit them by hand
+- [ ] Review existing features and specs with the QA architect skill (coverage gaps, wording, duplication)
+- [ ] LEARNINGS entry: what AI-generated tests got right, what needed fixing, and the review rules that came out of it
+
+**Outcome:** a clear, honest view of where AI speeds up test design and review, backed by real examples from this repo.
 
 ## Git workflow
 

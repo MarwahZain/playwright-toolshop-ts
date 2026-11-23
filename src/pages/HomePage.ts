@@ -20,6 +20,7 @@ export class HomePage extends BasePage {
   readonly loadingIndicator: Locator;
   readonly pagination: Locator;
   readonly activePage: Locator;
+  readonly searchResultsCount: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -41,6 +42,7 @@ export class HomePage extends BasePage {
     this.pagination = page.locator('ul.pagination');
     // eslint-disable-next-line playwright/no-raw-locators
     this.activePage = this.pagination.locator('.active');
+    this.searchResultsCount = page.getByTestId('search-result-count');
   }
 
   /** Opens the home page and returns the first products response (contains paging metadata). */
