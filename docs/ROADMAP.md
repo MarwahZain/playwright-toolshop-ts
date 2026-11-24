@@ -2,7 +2,7 @@
 
 Thirteen milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M6 complete, tagged v1.0 (open: M3 runtime measurement, M4 search for a new product). Next: M7.
+Progress: M0 to M7 complete, v1.0 tagged after M6 (open: M3 runtime measurement, M4 search for a new product). Next: M8.
 
 ## M0: Bootstrap
 
@@ -108,9 +108,9 @@ The `qa` environment in Docker, shards, published reports, the visual job in CI 
 - [x] Step definitions that reuse the existing fixtures (`loginPage`, `homePage`)
 - [x] Scenario Outline with an Examples table for search terms
 - [x] Background steps for shared setup
-- [x] Tags on scenarios: `@bdd`, `@regression`, `@readonly` (no `@smoke` while the old login and search specs stay)
-- [ ] Show feature and scenario names in the HTML report
-- [ ] README section: how BDD fits next to plain Playwright specs
+- [x] Tags on scenarios: `@bdd`, `@regression`, `@readonly`, `@smoke` on one search Examples block, `@fixme` for the wrong-password scenario
+- [x] Show feature and scenario names in the HTML report
+- [x] README section: how BDD fits next to plain Playwright specs
 
 **Outcome:** business-readable feature files that run on the same page objects and fixtures as the rest of the suite.
 

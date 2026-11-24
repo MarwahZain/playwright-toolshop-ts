@@ -71,6 +71,20 @@ npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
 
+## BDD scenarios
+
+Key business flows are also written as Gherkin features, readable by a product owner and run on the same page objects, fixtures, environments and reports as the plain specs ([`playwright-bdd`](https://github.com/vitalets/playwright-bdd)).
+
+- `features/login.feature`: valid login, wrong password, missing fields, empty form
+- `features/search.feature`: matching products for several terms, result count, no results
+
+```bash
+npm run test:bdd                  # only the scenarios
+TEST_ENV=uat npm run test:bdd     # read-only scenarios on UAT
+```
+
+`npx bddgen` turns each feature into an ordinary Playwright test before every run. How it fits next to the plain specs, the Gherkin features used and the tagging rules: [docs/BDD.md](docs/BDD.md).
+
 ## Reports
 
 Every run writes two reports:
