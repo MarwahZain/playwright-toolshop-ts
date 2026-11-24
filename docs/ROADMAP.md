@@ -174,6 +174,11 @@ Goal: use AI tools where they genuinely help a test team, and judge where they d
 
 - [ ] Draft Gherkin features from user stories with the test-analyst skill, then review and edit them by hand
 - [ ] Review existing features and specs with the QA architect skill (coverage gaps, wording, duplication)
+- [ ] Review my own changes with Claude before pushing (`/code-review` in Claude Code), and compare its findings with what CI catches
+- [ ] Claude in pull requests: managed Code Review through the Claude GitHub app if the plan allows it, or the `anthropics/claude-code-action` GitHub Action set up with `/install-github-app` (needs an `ANTHROPIC_API_KEY` secret)
+- [ ] `@claude` in a PR comment: ask it to add or fix a test, then review its change like any other PR
+- [ ] A scheduled Claude job in GitHub Actions with read-only tools, for example a daily summary of failed and flaky tests
+- [ ] Guardrails: least-privilege permissions, a `--max-turns` limit, allowed tools only, and the API cost per run
 - [ ] LEARNINGS entry: what AI-generated tests got right, what needed fixing, and the review rules that came out of it
 
 **Outcome:** a clear, honest view of where AI speeds up test design and review, backed by real examples from this repo.
