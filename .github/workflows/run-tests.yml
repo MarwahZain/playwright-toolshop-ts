@@ -82,7 +82,7 @@ jobs:
           if [ "${{ inputs.suite }}" = "smoke" ]; then
             npm run test:smoke
           else
-            npx playwright test
+            npm test
           fi
 
       - name: Upload HTML report

@@ -13,6 +13,7 @@ export default tseslint.config(
       'test-results',
       'allure-results',
       'allure-report',
+      '.features-gen',
     ],
   },
   js.configs.recommended,
@@ -37,4 +38,10 @@ export default tseslint.config(
     languageOptions: { globals: { console: 'readonly', process: 'readonly' } },
   },
   prettier,
+  {
+    // Step definitions run inside generated tests, so expect() in Given/When/Then is fine.
+    files: ['src/bdd/**/*.ts'],
+    // The rule only knows test() blocks; generated tests call these steps, so it does not apply.
+    rules: { 'playwright/no-standalone-expect': 'off' },
+  },
 );

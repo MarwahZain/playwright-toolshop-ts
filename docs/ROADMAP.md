@@ -1,8 +1,8 @@
 # Roadmap
 
-Twelve milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
+Thirteen milestones from first commit to a CI-green portfolio repo. Each milestone ends with a concrete outcome.
 
-Progress: M0 to M5 complete (open: M3 runtime measurement, M4 search for a new product). M6 in progress.
+Progress: M0 to M7 complete, v1.0 tagged after M6 (open: M3 runtime measurement, M4 search for a new product). Next: M8.
 
 ## M0: Bootstrap
 
@@ -95,13 +95,26 @@ Part B: GitHub Actions and environments
 - [x] B1: CI gate on every push and PR: lint, format, type and tag checks, then smoke; reports as artifacts
 - [x] B2: `TEST_ENV` switch in code (environment map, like Spring profiles), customer name from one place, `@readonly` tags
 - [x] B3: GitHub Environments `sit` and `uat` with variables, secrets and UAT approval; reusable `run-tests.yml`; Test on environment workflow; smoke with its own account; account-settings diagnostic
-- [ ] Wrap-up: current action versions (v7), Dependabot, README badges, tag release v1.0
+- [x] Wrap-up: current action versions (v7), Dependabot, README badges, tag release v1.0
 
-The `qa` environment in Docker, shards, published reports, the visual job in CI and Jenkins continue in M8.
+The `qa` environment in Docker, shards, published reports, the visual job in CI and Jenkins continue in M9.
 
 **Outcome:** one suite that switches environments with one variable, green CI gates, and UAT runs behind an approval.
 
-## M7: Lighthouse audits
+## M7: BDD with Gherkin
+
+- [x] Install `playwright-bdd` and add a `bddgen` step before the test run
+- [x] Feature file for login written from a user story, in `features/`
+- [x] Step definitions that reuse the existing fixtures (`loginPage`, `homePage`)
+- [x] Scenario Outline with an Examples table for search terms
+- [x] Background steps for shared setup
+- [x] Tags on scenarios: `@bdd`, `@regression`, `@readonly`, `@smoke` on one search Examples block, `@fixme` for the wrong-password scenario
+- [x] Show feature and scenario names in the HTML report
+- [x] README section: how BDD fits next to plain Playwright specs
+
+**Outcome:** business-readable feature files that run on the same page objects and fixtures as the rest of the suite.
+
+## M8: Lighthouse audits
 
 - [ ] Choose the integration: `playwright-lighthouse` inside the suite (reuses fixtures and saved sessions) or Lighthouse CI (`@lhci/cli`) as a separate CI step
 - [ ] A `lighthouse` project: Chromium only, 1 worker, tag `@lighthouse` (Lighthouse needs the remote debugging port and a quiet machine)
@@ -114,7 +127,7 @@ The `qa` environment in Docker, shards, published reports, the visual job in CI 
 
 **Outcome:** performance, accessibility, best practice and SEO scores for the key pages, checked against thresholds on every regression run.
 
-## M8: Advanced CI/CD
+## M9: Advanced CI/CD
 
 Goal: the techniques expected of a technical lead, built on the M6 setup.
 
@@ -128,7 +141,7 @@ Goal: the techniques expected of a technical lead, built on the M6 setup.
 
 **Outcome:** reproducible full runs on a fresh environment, fast sharded feedback, published trends, and the same pipeline in GitHub Actions and Jenkins.
 
-## M9: Showcase
+## M10: Showcase
 
 - [ ] Run the suite against `sprint5-with-bugs` and log each real bug as a GitHub issue
 - [ ] Optional: one Gherkin feature with `playwright-bdd`
@@ -138,7 +151,7 @@ Goal: the techniques expected of a technical lead, built on the M6 setup.
 
 **Outcome:** a repo that shows real testing work, not only automation.
 
-## M10: API mocking
+## M11: API mocking
 
 - [ ] Mock fixture in `src/fixtures` that wraps `page.route` for `/products`
 - [ ] Return a fixed product list with `route.fulfill` and assert the grid renders it exactly
@@ -150,21 +163,25 @@ Goal: the techniques expected of a technical lead, built on the M6 setup.
 - [ ] Tag mocked specs `@mocked` and keep them in `tests/mocked/`
 - [ ] LEARNINGS entry: when to mock and when to hit the real API
 
+- [ ] Network assertions: check the request a UI action sends (for example `/products/search?q=...`), its status and its response against the zod schema
+- [ ] UI and API agree: compare what the page shows (for example "6 products found") with the response it received (`total`)
+
 **Outcome:** any UI state can be tested, including errors the real backend rarely produces, without touching real data.
 
-## M11: BDD with Gherkin
+## M12: AI-assisted testing
 
-- [ ] Install `playwright-bdd` and add a `bddgen` step before the test run
-- [ ] Feature file for login written from a user story, in `features/`
-- [ ] Step definitions that reuse the existing fixtures (`loginPage`, `homePage`)
-- [ ] Scenario Outline with an Examples table for search terms
-- [ ] Background steps for shared setup
-- [ ] Tags on scenarios mapped to `@smoke` and `@regression`
-- [ ] Generate features with the test-analyst skill, review them with the QA architect skill
-- [ ] Show feature and scenario names in the HTML report
-- [ ] README section: how BDD fits next to plain Playwright specs
+Goal: use AI tools where they genuinely help a test team, and judge where they do not.
 
-**Outcome:** business-readable feature files that run on the same page objects and fixtures as the rest of the suite.
+- [ ] Draft Gherkin features from user stories with the test-analyst skill, then review and edit them by hand
+- [ ] Review existing features and specs with the QA architect skill (coverage gaps, wording, duplication)
+- [ ] Review my own changes with Claude before pushing (`/code-review` in Claude Code), and compare its findings with what CI catches
+- [ ] Claude in pull requests: managed Code Review through the Claude GitHub app if the plan allows it, or the `anthropics/claude-code-action` GitHub Action set up with `/install-github-app` (needs an `ANTHROPIC_API_KEY` secret)
+- [ ] `@claude` in a PR comment: ask it to add or fix a test, then review its change like any other PR
+- [ ] A scheduled Claude job in GitHub Actions with read-only tools, for example a daily summary of failed and flaky tests
+- [ ] Guardrails: least-privilege permissions, a `--max-turns` limit, allowed tools only, and the API cost per run
+- [ ] LEARNINGS entry: what AI-generated tests got right, what needed fixing, and the review rules that came out of it
+
+**Outcome:** a clear, honest view of where AI speeds up test design and review, backed by real examples from this repo.
 
 ## Git workflow
 

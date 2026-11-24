@@ -66,9 +66,24 @@ npx playwright test --project=api          # API tests only
 npx playwright test --project=hybrid       # hybrid API + UI tests
 npx playwright test --project=email        # email flows (needs local Docker with MailCatcher)
 npm run test:smoke                         # smoke set: guest (Chromium), customer, admin
+npm run test:bdd                           # BDD scenarios (features/*.feature), see docs/BDD.md
 npx playwright test --ui                   # interactive runner
 npx playwright show-report                 # open the last HTML report
 ```
+
+## BDD scenarios
+
+Key business flows are also written as Gherkin features, readable by a product owner and run on the same page objects, fixtures, environments and reports as the plain specs ([`playwright-bdd`](https://github.com/vitalets/playwright-bdd)).
+
+- `features/login.feature`: valid login, wrong password, missing fields, empty form
+- `features/search.feature`: matching products for several terms, result count, no results
+
+```bash
+npm run test:bdd                  # only the scenarios
+TEST_ENV=uat npm run test:bdd     # read-only scenarios on UAT
+```
+
+`npx bddgen` turns each feature into an ordinary Playwright test before every run. How it fits next to the plain specs, the Gherkin features used and the tagging rules: [docs/BDD.md](docs/BDD.md).
 
 ## Reports
 
@@ -145,6 +160,7 @@ tests/ui/customer/    UI tests that run signed in as a customer
 tests/ui/admin/       UI tests that run signed in as an admin
 docs/TOOLSHOP-LOCAL-SETUP.md  running Toolshop locally with Docker
 docs/CICD.md          CI/CD and environments: how it works, every command
+docs/BDD.md           BDD with Gherkin: how scenarios fit next to the plain specs
 docs/ROADMAP.md       milestones and progress
 docs/LEARNINGS.md     notes and lessons from building the suite
 ```

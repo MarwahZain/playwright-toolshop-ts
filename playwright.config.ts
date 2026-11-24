@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
 import './src/config/load-env';
 import { storageStatePath } from './src/global-setup';
 import { allureCategories, allureEnvironment } from './src/reporting/allure';
@@ -51,6 +52,16 @@ export default defineConfig({
   },
 
   projects: [
+    // BDD scenarios: npx bddgen turns features/*.feature into Playwright tests in .features-gen/
+    // (the folder defineBddConfig returns); steps live in src/bdd. See docs/BDD.md.
+    {
+      name: 'bdd',
+      testDir: defineBddConfig({
+        features: 'features/**/*.feature',
+        steps: 'src/bdd/**/*.ts',
+      }),
+      use: { ...devices['Desktop Chrome'] },
+    },
     // Guest (signed out) runs across browsers. Role specs are excluded here.
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: notGuest },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: notGuest },

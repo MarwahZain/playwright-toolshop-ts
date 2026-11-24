@@ -1,7 +1,7 @@
 # CI/CD and environments
 
 What Milestone 6 built, how it fits together, and every command used along the way.
-Advanced topics (Toolshop in Docker on the runner, shards, published reports, nightly runs, Jenkins) continue in M8, see [ROADMAP.md](ROADMAP.md).
+Advanced topics (Toolshop in Docker on the runner, shards, published reports, nightly runs, Jenkins) continue in M9, see [ROADMAP.md](ROADMAP.md).
 
 ## The big picture
 
@@ -23,7 +23,7 @@ One variable picks the environment, exactly like a Spring profile (`-Dspring.pro
 | `TEST_ENV`        | Application                                                                  | Data     | Tests that run              |
 | ----------------- | ---------------------------------------------------------------------------- | -------- | --------------------------- |
 | `local` (default) | Toolshop in Docker on your machine (localhost:4200 / 8091)                   | your own | all                         |
-| `qa`              | Toolshop in Docker on the CI runner, fresh database per run (M8)             | fresh    | all                         |
+| `qa`              | Toolshop in Docker on the CI runner, fresh database per run (M9)             | fresh    | all                         |
 | `sit`             | https://with-bugs.practicesoftwaretesting.com (a version with built-in bugs) | shared   | `@readonly`                 |
 | `uat`             | https://practicesoftwaretesting.com (stable)                                 | shared   | `@readonly`, approval in CI |
 
@@ -77,7 +77,7 @@ One variable picks the environment, exactly like a Spring profile (`-Dspring.pro
 | `ci.yml`                  | push to `main`, pull request, manual | quality checks, then smoke on `uat`                   |
 | `test-on-environment.yml` | manual (environment, suite)          | run smoke or the full allowed suite on `sit` or `uat` |
 | `run-tests.yml`           | called by other workflows            | shared steps for one environment and one suite        |
-| `regression.yml`          | manual, work in progress (M8)        | full suite against Toolshop in Docker on the runner   |
+| `regression.yml`          | manual, work in progress (M9)        | full suite against Toolshop in Docker on the runner   |
 
 ## Commands
 
@@ -157,4 +157,4 @@ git tag -a v1.0 -m "..." && git push origin v1.0     # release tag after merging
 - **Approvals belong on deliberate runs, not on pull request checks.** The UAT gate applies to the manual workflow; the PR smoke job uses repository secrets and never waits.
 - **A workflow's Run button appears only once the file is on `main`.** After that, "Use workflow from" can run the version from any branch, so new workflows are merged early and developed on branches.
 - **Keep pipelines thin.** All logic lives in npm scripts, so GitHub Actions and, later, Jenkins call the same commands.
-- **Running the application inside CI is DevOps work** (nginx configuration, file ownership on Linux, startup order). It pays off with isolated, reproducible runs, and continues in M8.
+- **Running the application inside CI is DevOps work** (nginx configuration, file ownership on Linux, startup order). It pays off with isolated, reproducible runs, and continues in M9.

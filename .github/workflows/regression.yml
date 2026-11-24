@@ -109,7 +109,7 @@ jobs:
           echo "UI not ready after 10 minutes"; docker compose logs angular-ui; exit 1
 
       - name: Run the full suite
-        run: npx playwright test
+        run: npm test
 
       - name: Upload HTML report
         if: ${{ !cancelled() }}

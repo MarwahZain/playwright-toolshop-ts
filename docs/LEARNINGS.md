@@ -163,3 +163,55 @@ No separate file format: the schema is a TypeScript object, and zod can generate
 Restart and reseed. The sprint only changes after Docker restarts with the new setting:
 `docker compose up -d`
 `docker exec -it pst-laravel-api-1 php artisan migrate:fresh --seed`
+
+# BDD with Gherkin (M7)
+
+**How it works**
+I write the feature files by hand, from the user story. `npx bddgen` turns each feature into a normal Playwright test in `.features-gen/` (never edited, git-ignored), and Playwright runs it like any other test.
+Nothing converts old specs into features: the direction is always feature → generated test.
+Like Cucumber-JVM next to TestNG in one Maven project, sharing the same page objects.
+
+**createBdd and mergeTests**
+`createBdd(test)` gives me `Given`, `When`, `Then`, connected to the fixtures of that test object.
+It only accepts a test that contains `playwright-bdd`'s own fixtures, and a scenario runs with one test object.
+So `src/bdd/fixtures.ts` does `mergeTests(bddTest, appTest)` once: BDD machinery + our page objects in one test object.
+Specs and step files never call `mergeTests` themselves; they import `test` (or `Given/When/Then`) from a fixture file.
+The export is always called `test` (like `@Test`); inside fixture files I rename on import (`as pagesTest`, `as apiTest`).
+
+**Fixtures**
+A fixture is something a test needs, prepared before it runs and cleaned up after (setup → `use()` → teardown).
+I import the `test` object, never a fixture; I receive fixtures by name: `async ({ loginPage }) => ...`.
+Only what a test asks for gets built (unlike `@BeforeEach`), and fixtures can use other fixtures.
+
+**Checking every element in a list**
+`toHaveText` / `toContainText` with one value check exactly one element → "strict mode violation" when the locator matches several.
+With an array they check every element, but I must know the exact number and order.
+For "every product contains the word":
+
+```ts
+await expect(homePage.productNames.filter({ hasNotText: new RegExp(term, 'i') })).toHaveCount(0);
+await expect(homePage.productNames).not.toHaveCount(0);
+```
+
+Order matters: first wait until no wrong product is left (the old results are gone), then check the new list is not empty. The other way round, the count check passes on the old products and an empty result slips through.
+
+**Locator vs snapshot**
+A locator (`productNames.filter(...)`) is a description, read live on every retry of `expect`.
+`.all()`, `allTextContents()`, `count()`, `innerText()` read the page once: a photo, no waiting. Fine for using a value, not for asserting.
+`async` methods return a Promise: `expect(await page.getText())`, not `await expect(page.getText())`.
+
+**Gherkin**
+Keywords are case-sensitive: `Background:` works, `background:` is silently treated as description text.
+Placeholders: `{string}` for quoted text, `{int}` for whole numbers (`{number}` does not exist).
+A tag on `Scenario Outline` applies to every row; a tag on an `Examples` block only to its rows.
+Placeholders in the outline or Examples title (`<product>`) give each row a readable name in the reports.
+Tags on the `Feature:` line apply to every scenario; no need to repeat them.
+`@fixme` = `test.fixme`: listed and reported as skipped, not run.
+
+**Test data and shared accounts**
+Test data must exist in the app: "Handsaw" returned 0 products, because the shop only has "Wood Saw" and "Circular Saw".
+Wrong-password tests lock real accounts: Toolshop locks a customer after 3 failed logins, with no automatic unlock. Running the spec and the feature twice locked `customer3`. Use an email that does not exist, or a fresh customer.
+
+**Positive and negative tests**
+Search with results and search with no results are both positive tests: normal input, the shop behaves as designed.
+Negative tests use unexpected input (empty search, special characters, very long text) and check the shop does not break.
