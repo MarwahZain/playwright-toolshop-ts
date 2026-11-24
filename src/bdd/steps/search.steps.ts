@@ -25,8 +25,8 @@ Then('I should see results for {string}', async ({ homePage }, term: string) => 
 
 Then(
   'The summary says {int} products found for {string}',
-  async ({homePage}, count: number, term: string) => {
-  const noun = count === 1 ? 'product' : 'products';
-  await expect(homePage.searchResultsCount).toHaveText(`${count} ${noun} found for '${term}'`);
-  
-});
+  async ({ homePage }, count: number, term: string) => {
+    const noun = count === 1 ? 'product' : 'products';
+    await expect(homePage.searchResultsCount).toHaveText(`${count} ${noun} found for '${term}'`);
+  },
+);

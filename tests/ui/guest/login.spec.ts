@@ -29,12 +29,16 @@ test.describe('Login', () => {
   );
 
   // Not @readonly: every wrong password counts towards locking the account on a shared environment.
-  test.fixme('shows an error for an invalid password', { tag: '@regression' }, async ({ loginPage }) => {
-    await loginPage.login(loginData.invalidCustomer.email, loginData.invalidCustomer.password);
+  test.fixme(
+    'shows an error for an invalid password',
+    { tag: '@regression' },
+    async ({ loginPage }) => {
+      await loginPage.login(loginData.invalidCustomer.email, loginData.invalidCustomer.password);
 
-    await expect(loginPage.loginError).toHaveText(loginData.invalidCredentialsMessage);
-    await loginPage.expectUrl(/\/auth\/login$/);
-  });
+      await expect(loginPage.loginError).toHaveText(loginData.invalidCredentialsMessage);
+      await loginPage.expectUrl(/\/auth\/login$/);
+    },
+  );
 
   for (const { name, email, password, error, message } of emptyFieldCases) {
     test(
